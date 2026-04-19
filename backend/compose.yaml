@@ -48,6 +48,20 @@ services:
                 - '--innodb_initialized'
             retries: 3
             timeout: 5s
+    phpmyadmin:
+        image: phpmyadmin:latest
+        ports:
+            - '8080:80'
+        environment:
+            PMA_HOST: mariadb
+            PMA_PORT: 3306
+            PMA_USER: '${DB_USERNAME}'
+            PMA_PASSWORD: '${DB_PASSWORD}'
+            PMA_ARBITRARY: 0
+        depends_on:
+            - mariadb
+        networks:
+            - sail
 networks:
     sail:
         driver: bridge
