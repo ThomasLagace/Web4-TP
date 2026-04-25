@@ -17,10 +17,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RankSeeder::class,
-            PlayerSeeder::class,
             TournamentSeeder::class,
-
+            PlayerSeeder::class,
             NewsSeeder::class,
+            RoundSeeder::class,
         ]);
     }
 }

@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->integer('points_multiplier');
+            $table->enum('status', ['pending', 'started', 'finished'])
+                ->default('pending');
             $table->foreignId('tournament_id')
                 ->constrained()
                 ->onDelete('cascade');

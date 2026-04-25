@@ -17,12 +17,12 @@ class PlayerController extends Controller
     {
         $query = Player::query();
 
-        if (request() -> has('username')) {
-            $query ->where('username','LIKE','%'.request() -> get('username').'%');
+        if (request() -> has('is_eliminated')) {
+            $query ->where('is_eliminated',true)->get();
         }
 
-        $ranks = Player::with('rank')->paginate(15);
-        return new PlayerCollection($ranks);
+        $query = Player::with('rank')->paginate(15);
+        return new PlayerCollection($query);
     }
 
     /**
@@ -38,8 +38,9 @@ class PlayerController extends Controller
      */
     public function store(PlayerRequest $request) : PlayerResource
     {
-        $rank = Player::create($request->validated());
-        return new PlayerResource($rank);
+        $player = Player::create($request->validated());
+        $player->calculateRank();
+        return new PlayerResource($player);
     }
 
     /**
@@ -64,6 +65,7 @@ class PlayerController extends Controller
     public function update(PlayerRequest $request, Player $player) : PlayerResource
     {
         $player->update($request->validated());
+        $player->calculateRank();
         return new PlayerResource($player);
     }
 

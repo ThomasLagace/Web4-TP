@@ -17,6 +17,7 @@ class TournamentSeeder extends Seeder
             'name' => 'Tournois des champions',
             'start_date' => now(),
             'end_date' => now()->addDay(4),
+            'status' => 'pending',
             'prize' => 1000,
         ]);
     }

@@ -15,13 +15,13 @@ class RankController extends Controller
      */
     public function index() : RankCollection
     {
-        $query = Rank::query();
+        $query = Rank::query()->with('players');
 
         if (request() -> has('name')) {
             $query ->where('name','LIKE','%'.request() -> get('name').'%');
         }
 
-        $ranks = Rank::paginate(15);
+        $ranks = $query->paginate(15);
         return new RankCollection($ranks);
     }
 
@@ -47,6 +47,7 @@ class RankController extends Controller
      */
     public function show(Rank $rank) : RankResource
     {
+        $rank->load('players');
         return new RankResource($rank);
     }
 

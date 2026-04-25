@@ -15,9 +15,15 @@ return new class extends Migration
             $table->id();
             $table->string('username');
             $table->string('affiliation');
-            $table->integer('points');
+            $table->integer('points')
+                ->default(0);
+            $table->boolean('is_eliminated')
+                ->default(false);
             $table->foreignId('rank_id')
-                ->default(1)
+                ->nullable()
+                ->constrained()
+                ->onDelete('cascade');
+            $table->foreignId('tournament_id')
                 ->constrained()
                 ->onDelete('cascade');
             $table->timestamps();

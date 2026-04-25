@@ -7,11 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Player extends Model
 {
-    protected $fillable = ['username', 'affiliation', 'points', 'rank_id'];
+    use hasFactory;
+    protected $fillable = ['username', 'affiliation', 'points', 'is_eliminated', 'tournament_id', 'rank_id'];
 
     public function rank()
     {
         return $this->belongsTo(Rank::class);
+    }
+
+    public function tournament()
+    {
+        return $this->belongsTo(Tournament::class);
     }
 
     public function gamesAsWhite() {
@@ -26,5 +32,8 @@ class Player extends Model
         return $this->hasMany(Game::class, 'winner_player_id');
     }
 
-    use hasFactory;
+    public function calculateRank() {
+        $this->rank_id = Rank::where('min_points', '<=', $this->points)->where('max_points', '>=', $this->points)->first()->id;
+        $this->save();
+    }
 }

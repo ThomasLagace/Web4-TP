@@ -15,19 +15,21 @@ return new class extends Migration
             $table->id();
             $table->dateTime('start_time');
             $table->enum('status', ['pending', 'started', 'finished'])
-                ->default('started');
+                ->default('pending');
             $table->foreignId('round_id')
                 ->constrained()
                 ->onDelete('cascade');
             $table->foreignId('white_player_id')
+                ->nullable()
                 ->constrained('players')
                 ->onDelete('cascade');
             $table->foreignId('black_player_id')
+                ->nullable()
                 ->constrained('players')
                 ->onDelete('cascade');
             $table->foreignId('winner_player_id')
-                ->constrained('players')
                 ->nullable()
+                ->constrained('players')
                 ->onDelete('cascade');
             $table->timestamps();
         });

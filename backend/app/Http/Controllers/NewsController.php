@@ -20,8 +20,8 @@ class NewsController extends Controller
             $query ->where('title','LIKE','%'.request() -> get('title').'%');
         }
 
-        $ranks = News::paginate(15);
-        return new NewsCollection($ranks);
+        $news = $query->paginate(15);
+        return new NewsCollection($news);
     }
 
     /**

@@ -25,14 +25,13 @@ class PlayerFactory extends Factory
             'username' => $this->faker->userName(),
             'affiliation' => $this->faker->company(),
             'points' => $points,
+            'is_eliminated' => false,
             'rank_id' => $this->calculateRank($points),
+            'tournament_id' => Rank::first(),
         ];
     }
 
     public function calculateRank($points) {
-        return Rank::where('min_points', '<=', $points)
-            ->where('max_points', '>=', $points)
-            ->first()
-            ->id;
+        return Rank::where('min_points', '<=', $points)->where('max_points', '>=', $points)->first()->id;
     }
 }
