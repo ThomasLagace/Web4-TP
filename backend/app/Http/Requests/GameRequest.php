@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Game;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class GameRequest extends FormRequest
 {
@@ -23,11 +25,11 @@ class GameRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'start_time' => ['required', 'date_format:H:i'],
-            'status' => ['required', 'enum:pending,started,finished'],
+            'start_time' => ['required', 'date_format:Y-m-d H:i'],
+            'status' => ['required', Rule::in('pending', 'started', 'finished')],
             'round_id' => ['required', 'integer', 'exists:rounds,id'],
-            'white_player_id' => ['required', 'integer', 'exists:players,id'],
-            'black_player_id' => ['required', 'integer', 'exists:players,id'],
+            'white_player_id' => ['nullable', 'integer', 'exists:players,id'],
+            'black_player_id' => ['nullable', 'integer', 'exists:players,id'],
             'winner_player_id' => ['nullable', 'integer', 'exists:players,id'],
         ];
     }

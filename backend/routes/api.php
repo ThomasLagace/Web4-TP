@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GameController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\RankController;
@@ -35,4 +36,15 @@ Route::prefix('players')
         Route::post('/', 'store');
         Route::put('/{player}', 'update');
         Route::delete('/{player}', 'destroy');
+    });
+
+Route::prefix('games')
+    ->controller(GameController::class)
+    ->group(function () {
+        Route::get('/', 'index');
+        Route::get('/{game}', 'show');
+        Route::post('/', 'store');
+        Route::put('/{game}', 'update');
+        Route::delete('/{game}', 'destroy');
+        Route::post('/{game}/finish', 'finish');
     });

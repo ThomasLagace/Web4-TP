@@ -18,11 +18,11 @@ class PlayerController extends Controller
         $query = Player::query();
 
         if (request() -> has('is_eliminated')) {
-            $query ->where('is_eliminated',true)->get();
+            $query ->where('is_eliminated',false)->get();
         }
 
-        $query = Player::with('rank')->paginate(15);
-        return new PlayerCollection($query);
+        $players = $query->with('rank')->paginate(15);
+        return new PlayerCollection($players);
     }
 
     /**

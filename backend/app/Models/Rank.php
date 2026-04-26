@@ -9,7 +9,8 @@ class Rank extends Model
 {
     protected $fillable = ['min_points', 'max_points', 'name'];
 
-    public function players() {
+    public function players()
+    {
         return $this->hasMany(Player::class);
     }
 }

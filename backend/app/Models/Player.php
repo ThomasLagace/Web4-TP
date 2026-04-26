@@ -20,20 +20,30 @@ class Player extends Model
         return $this->belongsTo(Tournament::class);
     }
 
-    public function gamesAsWhite() {
+    public function gamesAsWhite()
+    {
         return $this->hasMany(Game::class, 'white_player_id');
     }
 
-    public function gamesAsBlack() {
+    public function gamesAsBlack()
+    {
         return $this->hasMany(Game::class, 'black_player_id');
     }
 
-    public function gamesWon() {
+    public function gamesWon()
+    {
         return $this->hasMany(Game::class, 'winner_player_id');
     }
 
-    public function calculateRank() {
+    public function calculateRank()
+    {
         $this->rank_id = Rank::where('min_points', '<=', $this->points)->where('max_points', '>=', $this->points)->first()->id;
+        $this->save();
+    }
+
+    public function calculatePoints($multiplier, $odds)
+    {
+        $this->points = $this->points + $multiplier * (100 - $odds);
         $this->save();
     }
 }
