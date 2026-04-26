@@ -38,10 +38,10 @@ class Game extends Model
 
     public function calculateOddsForWhite()
     {
-        if ($this->whitePlayer !== null && $this->blackPlayer->points !== null) {
+        if ($this->whitePlayer !== null && $this->blackPlayer !== null) {
             $odds = 1/( 1 + 10 ** ( ($this->blackPlayer->points - $this->whitePlayer->points)/400 ) );
-
             $this->white_player_odds = round($odds * 100);
+            $this->status = 'started';
             $this->save();
         }
     }
