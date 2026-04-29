@@ -14,7 +14,7 @@ class PlayerSeeder extends Seeder
     public function run(): void
     {
         Player::factory()
-            ->count(20)
+            ->count(16)
             ->create();
     }
 }

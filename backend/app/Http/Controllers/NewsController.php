@@ -6,7 +6,6 @@ use App\Http\Requests\NewsRequest;
 use App\Http\Resources\NewsCollection;
 use App\Http\Resources\NewsResource;
 use App\Models\News;
-use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {

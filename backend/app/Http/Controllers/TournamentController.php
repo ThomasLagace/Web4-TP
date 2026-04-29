@@ -6,7 +6,7 @@ use App\Http\Requests\TournamentRequest;
 use App\Http\Resources\TournamentCollection;
 use App\Http\Resources\TournamentResource;
 use App\Models\Tournament;
-use Illuminate\Http\Request;
+use App\Services\TournamentService;
 
 class TournamentController extends Controller
 {
@@ -20,20 +20,12 @@ class TournamentController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(TournamentRequest $request) : TournamentResource
+    public function store(TournamentRequest $request, TournamentService $service) : TournamentResource
     {
-        $t = Tournament::create($request->validated());
-        return new TournamentResource($t);
+        $tournament = $service->createTournament($request->validated());
+        return new TournamentResource($tournament);
     }
 
     /**
@@ -42,14 +34,6 @@ class TournamentController extends Controller
     public function show(Tournament $t) : TournamentResource
     {
         return new TournamentResource($t);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Tournament $tournament)
-    {
-        //
     }
 
     /**
@@ -64,9 +48,15 @@ class TournamentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Tournament $t)
+    public function destroy(Tournament $t) : \Illuminate\Http\Response
     {
         $t->delete();
+        return response()->noContent();
+    }
+
+    public function close(Tournament $t) : TournamentResource
+    {
+        $t->update(['status' => 'finished']);
         return new TournamentResource($t);
     }
 }

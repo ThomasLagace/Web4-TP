@@ -27,7 +27,6 @@ class PlayerFactory extends Factory
             'points' => $points,
             'is_eliminated' => false,
             'rank_id' => $this->calculateRank($points),
-            'tournament_id' => Rank::first(),
         ];
     }
 

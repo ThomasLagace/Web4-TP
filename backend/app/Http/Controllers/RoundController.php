@@ -6,6 +6,7 @@ use App\Http\Requests\RoundRequest;
 use App\Http\Resources\RoundCollection;
 use App\Http\Resources\RoundResource;
 use App\Models\Round;
+use App\Models\Tournament;
 use Illuminate\Http\Request;
 
 class RoundController extends Controller
@@ -20,36 +21,11 @@ class RoundController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(RoundRequest $request) : RoundResource
-    {
-        $round = Round::create($request->validated());
-        return new RoundResource($round);
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(Round $round) : RoundResource
     {
         return new RoundResource($round);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Round $round)
-    {
-        //
     }
 
     /**
