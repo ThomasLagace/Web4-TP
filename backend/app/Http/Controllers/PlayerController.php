@@ -6,7 +6,6 @@ use App\Http\Requests\PlayerRequest;
 use App\Http\Resources\PlayerCollection;
 use App\Http\Resources\PlayerResource;
 use App\Models\Player;
-use Illuminate\Http\Request;
 
 class PlayerController extends Controller
 {
@@ -18,19 +17,11 @@ class PlayerController extends Controller
         $query = Player::query();
 
         if (request() -> has('is_eliminated')) {
-            $query ->where('is_eliminated',false)->get();
+            $query -> where('is_eliminated',filter_var(request()->get('is_eliminated'),FILTER_VALIDATE_BOOLEAN));
         }
 
         $players = $query->with('rank')->paginate(15);
         return new PlayerCollection($players);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -40,6 +31,7 @@ class PlayerController extends Controller
     {
         $player = Player::create($request->validated());
         $player->calculateRank();
+        $player->load('rank');
         return new PlayerResource($player);
     }
 
@@ -48,15 +40,8 @@ class PlayerController extends Controller
      */
     public function show(Player $player) : PlayerResource
     {
+        $player->load('rank');
         return new PlayerResource($player);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Player $player)
-    {
-        //
     }
 
     /**
@@ -66,15 +51,16 @@ class PlayerController extends Controller
     {
         $player->update($request->validated());
         $player->calculateRank();
+        $player->load('rank');
         return new PlayerResource($player);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Player $player) : PlayerResource
+    public function destroy(Player $player) : \Illuminate\HTTP\Response
     {
         $player->delete();
-        return new PlayerResource($player);
+        return response()->noContent();
     }
 }

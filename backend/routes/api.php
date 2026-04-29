@@ -5,7 +5,6 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\RankController;
 use App\Http\Controllers\RoundGameController;
-use App\Http\Controllers\TournamentController;
 use App\Http\Controllers\TournamentRoundController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +20,10 @@ Route::prefix('/news')
     ->controller(NewsController::class)
     ->group(function () {
         Route::get('/', 'index');
+        Route::get('/{news}', 'show');
+        Route::get('/{news}/edit', 'edit');
+        Route::patch('/{news}', 'update');
+        Route::delete('/{news}', 'destroy');
     });
 
 Route::prefix('/ranks')

@@ -6,7 +6,6 @@ use App\Http\Requests\RankRequest;
 use App\Http\Resources\RankCollection;
 use App\Http\Resources\RankResource;
 use App\Models\Rank;
-use Illuminate\Http\Request;
 
 class RankController extends Controller
 {
@@ -15,7 +14,7 @@ class RankController extends Controller
      */
     public function index() : RankCollection
     {
-        $query = Rank::query()->with('players');
+        $query = Rank::query();
 
         if (request() -> has('name')) {
             $query ->where('name','LIKE','%'.request() -> get('name').'%');
@@ -23,14 +22,6 @@ class RankController extends Controller
 
         $ranks = $query->paginate(15);
         return new RankCollection($ranks);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -47,16 +38,7 @@ class RankController extends Controller
      */
     public function show(Rank $rank) : RankResource
     {
-        $rank->load('players');
         return new RankResource($rank);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Rank $rank)
-    {
-        //
     }
 
     /**
@@ -71,9 +53,9 @@ class RankController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Rank $rank) : RankResource
+    public function destroy(Rank $rank) : \Illuminate\Http\Response
     {
         $rank->delete();
-        return new RankResource($rank);
+        return response()->noContent();
     }
 }

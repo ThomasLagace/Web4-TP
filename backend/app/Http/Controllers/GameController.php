@@ -6,8 +6,6 @@ use App\Http\Requests\GameRequest;
 use App\Http\Resources\GameCollection;
 use App\Http\Resources\GameResource;
 use App\Models\Game;
-use App\Models\Player;
-use Illuminate\Http\Request;
 
 class GameController extends Controller
 {
@@ -21,20 +19,13 @@ class GameController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(GameRequest $request) : GameResource
     {
         $game = Game::create($request->validated());
         $game->calculateOddsForWhite();
+        $game->load(['whitePlayer', 'blackPlayer', 'winnerPlayer', 'round']);
         return new GameResource($game);
     }
 
@@ -43,15 +34,8 @@ class GameController extends Controller
      */
     public function show(Game $game) : GameResource
     {
+        $game->load(['whitePlayer', 'blackPlayer', 'winnerPlayer', 'round']);
         return new GameResource($game);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Game $game)
-    {
-        //
     }
 
     /**
@@ -61,22 +45,27 @@ class GameController extends Controller
     {
         $game->update($request->validated());
         $game->calculateOddsForWhite();
+        $game->load(['whitePlayer', 'blackPlayer', 'winnerPlayer', 'round']);
         return new GameResource($game);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Game $game) : GameResource
+    public function destroy(Game $game) : \Illuminate\Http\Response
     {
         $game->delete();
-        return new GameResource($game);
+        return response()->noContent();
     }
 
+    /**
+     * Finishes the game and display it's updated properties.
+     */
     public function finish(Game $game) : GameResource
     {
+        $game->load(['whitePlayer', 'blackPlayer', 'round']);
         $game->designateWinner();
-        $game->refresh();
+        $game->load('winnerPlayer',);
         $game->distributePointsToPlayers();
         return new GameResource($game);
     }

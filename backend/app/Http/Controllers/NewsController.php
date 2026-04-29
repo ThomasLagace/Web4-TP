@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\NewsRequest;
 use App\Http\Resources\NewsCollection;
 use App\Http\Resources\NewsResource;
 use App\Models\News;
@@ -25,17 +26,9 @@ class NewsController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) : NewsResource
+    public function store(NewsRequest $request) : NewsResource
     {
         $news = News::create($request->validated());
         return new NewsResource($news);
@@ -50,17 +43,9 @@ class NewsController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(News $news)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, News $news) : NewsResource
+    public function update(NewsRequest $request, News $news) : NewsResource
     {
         $news->update($request->validated());
         return new NewsResource($news);
@@ -69,9 +54,9 @@ class NewsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(News $news) : NewsResource
+    public function destroy(News $news) : \Illuminate\Http\Response
     {
         $news->delete();
-        return new NewsResource($news);
+        return response()->noContent();
     }
 }
