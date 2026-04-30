@@ -50,7 +50,6 @@ class Game extends Model
     {
         $winner = collect([$this->whitePlayer, $this->blackPlayer])->random();
         $this->winner_player_id = $winner->id;
-        $this->status = 'finished';
         $this->save();
     }
 

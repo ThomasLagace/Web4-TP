@@ -65,8 +65,9 @@ class GameController extends Controller
     {
         $game->load(['whitePlayer', 'blackPlayer', 'round']);
         $game->designateWinner();
-        $game->load('winnerPlayer',);
+        $game->load('winnerPlayer');
         $game->distributePointsToPlayers();
+        $game->update(['status' => 'finished']);
         return new GameResource($game);
     }
 }

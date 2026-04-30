@@ -14,7 +14,7 @@ class TournamentService
     {
         $tournament = Tournament::create($tournament);
 
-        $rounds = Round::with('tournament')->get();
+        $rounds = Round::with('tournament')->getFirst();
 
         if ($rounds->isEmpty())
         {
@@ -37,12 +37,12 @@ class TournamentService
         }
 
         $rounds = $tournament->rounds;
-        $this->createGamesForRounds($rounds);
+        $this->createGamesForRound($rounds);
 
         return $tournament->load(['rounds', 'players']);
     }
 
-    public function createGamesForRounds(Collection $rounds)
+    public function createGamesForRound(Collection $rounds)
     {
         $players = Player::with(['rank', 'tournament'])->get();
         foreach ($rounds as $index => $round) {
@@ -66,7 +66,13 @@ class TournamentService
                     $whitePlayer->update(['tournament_id' => $round->tournament->id]);
                     $blackPlayer->update(['tournament_id' => $round->tournament->id]);
 
-                    $game = Game::create(['start_time' => now(), 'status' => 'pending', 'white_player_id' => $whitePlayer->id, 'black_player_id'=> $blackPlayer->id, 'round_id' => $round->id]);
+                    $game = Game::create([
+                        'start_time' => now(),
+                        'status' => 'pending',
+                        'white_player_id' => $whitePlayer->id,
+                        'black_player_id'=> $blackPlayer->id,
+                        'round_id' => $round->id
+                    ]);
                     $game->calculateOddsForWhite();
                 }
             }
@@ -80,7 +86,29 @@ class TournamentService
         }
     }
 
-    public function associateNewGamesWithPlayers() {
-        //
+    public function changeRound($roundId, Tournament $tournament)
+    {
+        $roundToStart = Round::where('id', $roundId + 1)->first();
+        $playersLeft = Player::where('is_eliminated', false)->get();
+
+        if ($roundToStart === null || $playersLeft->count() <= 1) {
+            $tournament->update(['status' => 'finished']);
+        } else {
+            $gamesToUpdate = $roundToStart->games();
+            foreach ($gamesToUpdate as $game) {
+
+                $twoPlayers = $playersLeft->random(2);
+                $whitePlayer = $twoPlayers->first();
+                $blackPlayer = $twoPlayers->last();
+                $playersLeft = $playersLeft->diff($twoPlayers);
+
+                $game->update([
+                    'status' => 'started',
+                    'white_player_id' => $whitePlayer->id,
+                    'black_player_id' => $blackPlayer->id,
+                ]);
+                $game->calculateOddsForWhite();
+            }
+        }
     }
 }
