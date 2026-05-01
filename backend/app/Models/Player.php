@@ -37,17 +37,16 @@ class Player extends Model
 
     public function calculateRank()
     {
-        $rank = Rank::where('min_points', '<=', $this->points)->where('max_points', '>=', $this->points)->first()->id;
+        $rank = Rank::where('min_points', '<=', $this->points)->where('max_points', '>=', $this->points)->first();
         if ($this) {
-            $this->rank_id = $rank->rank_id;
+            $this->rank_id = $rank->id;
             $this->save();
         }
     }
 
     public function calculatePoints($multiplier, $odds)
     {
-        $this->points = $this->points + $multiplier * (100 - $odds);
-        $this->save();
+        $this->update(['points' => $this->points + $multiplier * (100 - $odds) + 400]);
         $this->calculateRank();
     }
 }

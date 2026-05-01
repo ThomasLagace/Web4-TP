@@ -19,7 +19,7 @@ class TournamentService
         if ($rounds->isEmpty())
         {
             $data = [
-                ['name' => 'Round 1', 'points_multiplier' => 1, 'status' => 'pending', 'tournament_id' => $tournament->id],
+                ['name' => 'Round 1', 'points_multiplier' => 1, 'status' => 'started', 'tournament_id' => $tournament->id],
                 ['name' => 'Round 2', 'points_multiplier' => 2, 'status' => 'pending', 'tournament_id' => $tournament->id],
                 ['name' => 'Demi-finale', 'points_multiplier' => 3, 'status' => 'pending', 'tournament_id' => $tournament->id],
                 ['name' => 'Finale', 'points_multiplier' => 5, 'status' => 'pending', 'tournament_id' => $tournament->id],
@@ -31,18 +31,18 @@ class TournamentService
         }
         else
         {
-            foreach ($rounds as $round) {
-                $round->update(['status' => 'pending', 'tournament_id' => $tournament->id]);
+            foreach ($rounds as $index => $round) {
+                $round->update(['status' => $index === 0 ? "started" : "pending", 'tournament_id' => $tournament->id]);
             }
         }
 
         $rounds = $tournament->rounds;
-        $this->createGamesForRounds($rounds);
+        $this->createGamesForRound($rounds);
 
         return $tournament->load(['rounds', 'players']);
     }
 
-    public function createGamesForRounds(Collection $rounds)
+    public function createGamesForRound(Collection $rounds)
     {
         $players = Player::with(['rank', 'tournament'])->get();
         foreach ($rounds as $index => $round) {
@@ -66,7 +66,13 @@ class TournamentService
                     $whitePlayer->update(['tournament_id' => $round->tournament->id]);
                     $blackPlayer->update(['tournament_id' => $round->tournament->id]);
 
-                    $game = Game::create(['start_time' => now(), 'status' => 'pending', 'white_player_id' => $whitePlayer->id, 'black_player_id'=> $blackPlayer->id, 'round_id' => $round->id]);
+                    $game = Game::create([
+                        'start_time' => now(),
+                        'status' => 'started',
+                        'white_player_id' => $whitePlayer->id,
+                        'black_player_id'=> $blackPlayer->id,
+                        'round_id' => $round->id
+                    ]);
                     $game->calculateOddsForWhite();
                 }
             }
@@ -74,13 +80,37 @@ class TournamentService
             {
                 for ($i = 0; $i < $gamesCount; $i++)
                 {
-                    Game::create(['start_time' => now(), 'status' => 'started', 'round_id' => $round->id]);
+                    Game::create(['start_time' => now(), 'status' => 'pending', 'round_id' => $round->id]);
                 }
             }
         }
     }
 
-    public function associateNewGamesWithPlayers() {
-        //
+    public function changeRound($roundId, Tournament $tournament)
+    {
+        $roundToStart = Round::where('id', $roundId + 1)->first();
+        $playersLeft = Player::where('is_eliminated', 0)->get();
+
+        if ($roundToStart === null || $playersLeft->count() <= 1) {
+            $tournament->update(['status' => 'finished']);
+        } else {
+            $gamesToUpdate = $roundToStart->games()->get();
+            foreach ($gamesToUpdate as $game) {
+
+                $twoPlayers = $playersLeft->random(2);
+                $whitePlayer = $twoPlayers->first();
+                $blackPlayer = $twoPlayers->last();
+                $playersLeft = $playersLeft->diff($twoPlayers);
+
+                $game->update([
+                    'status' => 'started',
+                    'white_player_id' => $whitePlayer->id,
+                    'black_player_id' => $blackPlayer->id,
+                ]);
+                $game->calculateOddsForWhite();
+            }
+
+            $roundToStart->update(['status' => 'started']);
+        }
     }
 }

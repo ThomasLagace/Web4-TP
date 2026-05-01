@@ -4,6 +4,7 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\RankController;
+use App\Http\Controllers\RoundController;
 use App\Http\Controllers\RoundGameController;
 use App\Http\Controllers\TournamentController;
 use App\Http\Controllers\TournamentRoundController;
@@ -48,6 +49,8 @@ Route::prefix('/players')
 Route::prefix('/games')
     ->controller(GameController::class)
     ->group(function () {
+        Route::get('/', 'index');
+        Route::get('/{game}', 'show');
         Route::post('/{game}/finish', 'finish');
     });
 
@@ -55,5 +58,12 @@ Route::prefix('/games')
 Route::prefix('/tournaments')
     ->controller(TournamentController::class)
     ->group(function () {
+        Route::get('/', 'index');
         Route::post('/', 'store');
+    });
+
+Route::prefix('/rounds')
+    ->controller(RoundController::class)
+    ->group(function () {
+        Route::get('/', 'index');
     });
