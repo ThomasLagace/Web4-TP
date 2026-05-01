@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Models\Game;
-use App\Models\Round;
 use App\Observers\GameObserver;
 use Illuminate\Support\ServiceProvider;
 

@@ -63,7 +63,7 @@ class GameController extends Controller
      */
     public function finish(Game $game) : GameResource
     {
-        $game->load(['whitePlayer', 'blackPlayer', 'round']);
+        $game->load(['whitePlayer.rank', 'blackPlayer.rank', 'round']);
         $game->designateWinner();
         $game->load('winnerPlayer');
         $game->distributePointsToPlayers();

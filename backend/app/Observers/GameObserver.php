@@ -27,7 +27,7 @@ class GameObserver
 
             if ($finishedGames === $totalGames) {
                 $round->update(['status' => 'finished']);
-                $tournament = Tournament::where('id', $round->tournament_id)->getFirst();
+                $tournament = Tournament::where('id', $round->tournament_id)->first();
                 $this->service->changeRound($round->id, $tournament);
             }
         }
