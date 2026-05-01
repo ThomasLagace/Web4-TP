@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Game;
+use App\Models\News;
 use App\Models\Player;
 use App\Models\Round;
 use App\Models\Tournament;
@@ -86,7 +87,7 @@ class TournamentService
         }
     }
 
-    public function changeRound($roundId, Tournament $tournament)
+    public function changeRound(Game $game, $roundId, Tournament $tournament)
     {
         $roundToStart = Round::where('id', $roundId + 1)->first();
         $playersLeft = Player::where('is_eliminated', 0)->get();
@@ -95,22 +96,39 @@ class TournamentService
             $tournament->update(['status' => 'finished']);
         } else {
             $gamesToUpdate = $roundToStart->games()->get();
-            foreach ($gamesToUpdate as $game) {
+            foreach ($gamesToUpdate as $g) {
 
                 $twoPlayers = $playersLeft->random(2);
                 $whitePlayer = $twoPlayers->first();
                 $blackPlayer = $twoPlayers->last();
                 $playersLeft = $playersLeft->diff($twoPlayers);
 
-                $game->update([
+                $g->update([
                     'status' => 'started',
                     'white_player_id' => $whitePlayer->id,
                     'black_player_id' => $blackPlayer->id,
                 ]);
-                $game->calculateOddsForWhite();
+                $g->calculateOddsForWhite();
             }
 
             $roundToStart->update(['status' => 'started']);
+
+            $game->load(['whitePlayer', 'blackPlayer', 'winnerPlayer']);
+            $p1 = $game->whitePlayer;
+            $p2 = $game->blackPlayer;
+            $winner = $game->winnerPlayer;
+
+            News::create([
+                'date' => now(),
+                'title' => 'Changement de round',
+                'content' =>
+                    'Le round actuel se termine après l\'affrontement mythique entre ' .
+                    $p1->username .
+                    ' et ' . $p2->username .
+                    ', dans lequel ' . $winner->username .
+                    ' a triomphé. Préparez-vous, le round suivant commence: ' .
+                    $roundToStart->name
+            ]);
         }
     }
 }

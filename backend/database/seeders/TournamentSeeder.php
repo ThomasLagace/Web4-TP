@@ -16,7 +16,7 @@ class TournamentSeeder extends Seeder
         Tournament::create([
             'name' => 'Tournois des champions',
             'start_date' => now(),
-            'end_date' => now()->addDay(4),
+            'end_date' => now()->addDays(4),
             'status' => 'pending',
             'prize' => 1000,
         ]);

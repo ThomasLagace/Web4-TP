@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TournamentRequest;
 use App\Http\Resources\TournamentCollection;
 use App\Http\Resources\TournamentResource;
+use App\Models\News;
 use App\Models\Tournament;
 use App\Services\TournamentService;
 
@@ -25,6 +26,14 @@ class TournamentController extends Controller
     public function store(TournamentRequest $request, TournamentService $service) : TournamentResource
     {
         $tournament = $service->createTournament($request->validated());
+        News::create([
+            'date' => now(),
+            'title' => 'Un nouveau tournoi a commencé',
+            'content' =>
+                'Le ' .
+                $tournament->name .
+                ' ouvre ses portes à l\'instant! Venez encourager vos joueurs préférés à distance sur notre site web directement. Bon visionnage!'
+            ]);
         return new TournamentResource($tournament);
     }
 
@@ -57,6 +66,13 @@ class TournamentController extends Controller
     public function close(Tournament $t) : TournamentResource
     {
         $t->update(['status' => 'finished']);
+        News::create([
+            'date' => now(),
+            'title' => $t->name . ' terminé',
+            'content' =>
+                'Ce tournoi est désormais clos, le gagnant a reçu la somme de ' .
+                $t->prize .
+                ' elo. Nous espérons vous revoir au prochain tournoi !']);
         return new TournamentResource($t);
     }
 }

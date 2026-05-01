@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Game;
+use App\Models\News;
 use App\Models\Round;
 use App\Models\Tournament;
 use App\Services\TournamentService;
@@ -28,7 +29,16 @@ class GameObserver
             if ($finishedGames === $totalGames) {
                 $round->update(['status' => 'finished']);
                 $tournament = Tournament::where('id', $round->tournament_id)->first();
-                $this->service->changeRound($round->id, $tournament);
+                $this->service->changeRound($game, $round->id, $tournament);
+            } else {
+                News::create([
+                    'date' => now(),
+                    'title' => 'Partie terminée',
+                    'content' => 'La partie entre ' .
+                        $game->whitePlayer->username . " et " .
+                        $game->blackPlayer->username . ' est terminée. Le vainqueur est ' .
+                        $game->winnerPlayer->username
+                ]);
             }
         }
     }
