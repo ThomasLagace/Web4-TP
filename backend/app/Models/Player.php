@@ -35,6 +35,10 @@ class Player extends Model
         return $this->hasMany(Game::class, 'winner_player_id');
     }
 
+    public function tournaments() {
+        return $this->hasMany(Tournament::class);
+    }
+
     public function calculateRank()
     {
         $rank = Rank::where('min_points', '<=', $this->points)->where('max_points', '>=', $this->points)->first();

@@ -89,11 +89,30 @@ class TournamentService
 
     public function changeRound(Game $game, $roundId, Tournament $tournament)
     {
+        $game->load(['whitePlayer', 'blackPlayer', 'winnerPlayer']);
+        $p1 = $game->whitePlayer;
+        $p2 = $game->blackPlayer;
+        $winner = $game->winnerPlayer;
         $roundToStart = Round::where('id', $roundId + 1)->first();
         $playersLeft = Player::where('is_eliminated', 0)->get();
 
         if ($roundToStart === null || $playersLeft->count() <= 1) {
-            $tournament->update(['status' => 'finished']);
+            $tournament->update(['winner_id' => $game->winner_player_id, 'status' => 'finished']);
+            $winner->update(['points' => $winner->points + $tournament->prize]);
+
+            News::create([
+                'date' => now(),
+                'title' => $tournament->name . ' terminé',
+                'content' =>
+                    'Dans l\'affrontement final entre' . $p1->username .
+                    ' et ' . $p2->username .
+                    ', nous sommes fier de vous annoncer que le grand gagnant du ' .
+                    $tournament->name .
+                    ' n\'est nul autre que ' .
+                    $winner->username .
+                    '! Ce tournoi est désormais clos, le gagnant a reçu la somme de ' .
+                    $tournament->prize .
+                    ' elo. Nous espérons vous revoir au prochain tournoi !']);
         } else {
             $gamesToUpdate = $roundToStart->games()->get();
             foreach ($gamesToUpdate as $g) {
@@ -112,11 +131,6 @@ class TournamentService
             }
 
             $roundToStart->update(['status' => 'started']);
-
-            $game->load(['whitePlayer', 'blackPlayer', 'winnerPlayer']);
-            $p1 = $game->whitePlayer;
-            $p2 = $game->blackPlayer;
-            $winner = $game->winnerPlayer;
 
             News::create([
                 'date' => now(),

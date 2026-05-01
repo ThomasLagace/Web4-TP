@@ -66,13 +66,6 @@ class TournamentController extends Controller
     public function close(Tournament $t) : TournamentResource
     {
         $t->update(['status' => 'finished']);
-        News::create([
-            'date' => now(),
-            'title' => $t->name . ' terminé',
-            'content' =>
-                'Ce tournoi est désormais clos, le gagnant a reçu la somme de ' .
-                $t->prize .
-                ' elo. Nous espérons vous revoir au prochain tournoi !']);
         return new TournamentResource($t);
     }
 }
