@@ -6,6 +6,7 @@ use App\Http\Requests\GameRequest;
 use App\Http\Resources\GameCollection;
 use App\Http\Resources\GameResource;
 use App\Models\Game;
+use App\Models\News;
 
 class GameController extends Controller
 {
@@ -65,9 +66,16 @@ class GameController extends Controller
     {
         $game->load(['whitePlayer.rank', 'blackPlayer.rank', 'round']);
         $game->designateWinner();
-        $game->load('winnerPlayer');
+        $game->load(['winnerPlayer']);
         $game->distributePointsToPlayers();
         $game->update(['status' => 'finished']);
+        News::create([
+            'date' => now(),
+            'title' => 'Partie terminée', 'content' => 'La partie entre ' .
+                $game->whitePlayer->username . " et " .
+                $game->blackPlayer->username . ' est terminée. Le vainqueur est ' .
+                $game->winnerPlayer->username
+        ]);
         return new GameResource($game);
     }
 }
