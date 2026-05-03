@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('ranks', function (Blueprint $table) {
             $table->id();
-            $table->integer('min_points');
-            $table->integer('max_points');
+            $table->integer('min_points')
+            ->nullable();
+            $table->integer('max_points')
+            ->nullable();
             $table->string('name');
             $table->timestamps();
         });

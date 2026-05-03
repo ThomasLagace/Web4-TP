@@ -41,8 +41,13 @@ class Player extends Model
 
     public function calculateRank()
     {
-        $rank = Rank::where('min_points', '<=', $this->points)->where('max_points', '>=', $this->points)->first();
-        if ($this) {
+        $rank = Rank::where('min_points', '<=', $this->points)
+            ->where(function ($query) {
+                $query->whereNull('max_points')
+                    ->orWhere('max_points', '>=', $this->points);
+            })->first();
+
+        if ($rank) {
             $this->rank_id = $rank->id;
             $this->save();
         }

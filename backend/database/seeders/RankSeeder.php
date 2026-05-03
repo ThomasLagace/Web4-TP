@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Rank;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class RankSeeder extends Seeder
@@ -27,7 +26,7 @@ class RankSeeder extends Seeder
             ['min_points' => 2000, 'max_points' => 2199, 'name' => 'Grand Maître'],
             ['min_points' => 2200, 'max_points' => 2399, 'name' => 'Grand Maître FIDE'],
             ['min_points' => 2400, 'max_points' => 2599, 'name' => 'Super Grand Maître'],
-            ['min_points' => 2600, 'max_points' => 9999, 'name' => 'Élite Mondiale'],
+            ['min_points' => 2600, 'name' => 'Élite Mondiale'],
         ];
 
         foreach ($ranks as $rank) {
