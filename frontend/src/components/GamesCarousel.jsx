@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import ChevronLeft from '../svgs/chevron-left.svg?react'
 import ChevronRight from '../svgs/chevron-right.svg?react'
+import GameCard from './GameCard'
 
 const items = [
   { id: 1, title: "Card One",   text: "Some content for the first card." },
@@ -37,7 +38,7 @@ export default function GamesCarousel({ visibleNeighbors = 1 }) {
           <ChevronLeft />
         </button>
 
-        {visibleIndices.map((idx, k) => {
+        {/*visibleIndices.map((idx, k) => {
           const item     = items[idx];
           const isActive = k === neighbors;
           return (
@@ -53,7 +54,14 @@ export default function GamesCarousel({ visibleNeighbors = 1 }) {
               </div>
             </div>
           );
-        })}
+        })*/}
+
+        <GameCard />
+        <GameCard />
+        <GameCard />
+        <GameCard />
+        <GameCard />
+        <GameCard />
 
         <button
           className="btn btn-primary rounded-circle align-self-center d-flex align-items-center justify-content-center flex-shrink-0"
