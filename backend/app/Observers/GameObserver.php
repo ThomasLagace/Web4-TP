@@ -3,14 +3,14 @@
 namespace App\Observers;
 
 use App\Models\Game;
-use App\Models\News;
 use App\Models\Round;
-use App\Models\Tournament;
+use App\Services\NewsService;
+use App\Services\RoundService;
 use App\Services\TournamentService;
 
 class GameObserver
 {
-    public function __construct(private TournamentService $service) {}
+    public function __construct(private RoundService $roundService, private TournamentService $tournamentService, private NewsService $newsService) {}
 
     /**
      * Handle the Game "updated" event.
@@ -19,6 +19,7 @@ class GameObserver
     {
         if ($game->wasChanged('status') && $game->status === 'finished') {
             $round = Round::where('id', $game->round_id)->first();
+            $tournament = $round->tournament;
 
             $finishedGames = $round->games()
                 ->where('status', 'finished')
@@ -28,17 +29,14 @@ class GameObserver
 
             if ($finishedGames === $totalGames) {
                 $round->update(['status' => 'finished']);
-                $tournament = Tournament::where('id', $round->tournament_id)->first();
-                $this->service->changeRound($game, $round->id, $tournament);
+                $response = $this->roundService->changeRound($game, $round);
+
+                if ($response === "tournament ended")
+                {
+                    $this->tournamentService->endTournament($tournament, $game);
+                }
             } else {
-                News::create([
-                    'date' => now(),
-                    'title' => 'Partie terminée',
-                    'content' => 'La partie entre ' .
-                        $game->whitePlayer->username . " et " .
-                        $game->blackPlayer->username . ' est terminée. Le vainqueur est ' .
-                        $game->winnerPlayer->username
-                ]);
+                $this->newsService->endGameNews($game);
             }
         }
     }

@@ -3,146 +3,28 @@
 namespace App\Services;
 
 use App\Models\Game;
-use App\Models\News;
-use App\Models\Player;
-use App\Models\Round;
 use App\Models\Tournament;
-use Illuminate\Support\Collection;
 
 class TournamentService
 {
+    public function __construct(private RoundService $roundService, private NewsService $newsService) {}
+
+    public function endTournament(Tournament $tournament, Game $game)
+    {
+        $tournament->update(['winner_id' => $game->winner_player_id, 'status' => 'finished']);
+        $game->winnerPlayer->update(['points' => $game->winnerPlayer->points + $tournament->prize]);
+
+        $this->newsService->endTournamentNews($tournament, $game);
+    }
+
     public function createTournament(array $tournament) : Tournament
     {
         $tournament = Tournament::create($tournament);
 
-        $rounds = Round::with('tournament')->get();
+        $rounds = $this->roundService->createRoundsForTournament($tournament);
 
-        if ($rounds->isEmpty())
-        {
-            $data = [
-                ['name' => 'Round 1', 'points_multiplier' => 1, 'status' => 'started', 'tournament_id' => $tournament->id],
-                ['name' => 'Round 2', 'points_multiplier' => 2, 'status' => 'pending', 'tournament_id' => $tournament->id],
-                ['name' => 'Demi-finale', 'points_multiplier' => 3, 'status' => 'pending', 'tournament_id' => $tournament->id],
-                ['name' => 'Finale', 'points_multiplier' => 5, 'status' => 'pending', 'tournament_id' => $tournament->id],
-            ];
-
-            foreach ($data as $d) {
-                Round::create($d);
-            }
-        }
-        else
-        {
-            foreach ($rounds as $index => $round) {
-                $round->update(['status' => $index === 0 ? "started" : "pending", 'tournament_id' => $tournament->id]);
-            }
-        }
-
-        $rounds = $tournament->rounds;
-        $this->createGamesForRound($rounds);
+        $this->roundService->createGamesForRounds($rounds);
 
         return $tournament->load(['rounds', 'players']);
-    }
-
-    public function createGamesForRound(Collection $rounds)
-    {
-        $players = Player::with(['rank', 'tournament'])->get();
-        foreach ($rounds as $index => $round) {
-            $gamesCount = match($index) {
-                0 => 8,
-                1 => 4,
-                2 => 2,
-                3 => 1,
-            };
-
-            if ($gamesCount == 8)
-            {
-                for ($i = 0; $i < $gamesCount; $i++)
-                {
-                    $twoPlayers = $players->random(2);
-                    $whitePlayer = $twoPlayers->first();
-                    $blackPlayer = $twoPlayers->last();
-
-                    $players = $players->diff($twoPlayers);
-
-                    $whitePlayer->update(['tournament_id' => $round->tournament->id]);
-                    $blackPlayer->update(['tournament_id' => $round->tournament->id]);
-
-                    $game = Game::create([
-                        'start_time' => now(),
-                        'status' => 'started',
-                        'white_player_id' => $whitePlayer->id,
-                        'black_player_id'=> $blackPlayer->id,
-                        'round_id' => $round->id
-                    ]);
-                    $game->calculateOddsForWhite();
-                }
-            }
-            else
-            {
-                for ($i = 0; $i < $gamesCount; $i++)
-                {
-                    Game::create(['start_time' => now(), 'status' => 'pending', 'round_id' => $round->id]);
-                }
-            }
-        }
-    }
-
-    public function changeRound(Game $game, $roundId, Tournament $tournament)
-    {
-        $game->load(['whitePlayer', 'blackPlayer', 'winnerPlayer']);
-        $p1 = $game->whitePlayer;
-        $p2 = $game->blackPlayer;
-        $winner = $game->winnerPlayer;
-        $roundToStart = Round::where('id', $roundId + 1)->first();
-        $playersLeft = Player::where('is_eliminated', 0)->get();
-
-        if ($roundToStart === null || $playersLeft->count() <= 1) {
-            $tournament->update(['winner_id' => $game->winner_player_id, 'status' => 'finished']);
-            $winner->update(['points' => $winner->points + $tournament->prize]);
-
-            News::create([
-                'date' => now(),
-                'title' => $tournament->name . ' terminé',
-                'content' =>
-                    'Dans l\'affrontement final entre' . $p1->username .
-                    ' et ' . $p2->username .
-                    ', nous sommes fier de vous annoncer que le grand gagnant du ' .
-                    $tournament->name .
-                    ' n\'est nul autre que ' .
-                    $winner->username .
-                    '! Ce tournoi est désormais clos, le gagnant a reçu la somme de ' .
-                    $tournament->prize .
-                    ' elo. Nous espérons vous revoir au prochain tournoi !']);
-        } else {
-            $gamesToUpdate = $roundToStart->games()->get();
-            foreach ($gamesToUpdate as $g) {
-
-                $twoPlayers = $playersLeft->random(2);
-                $whitePlayer = $twoPlayers->first();
-                $blackPlayer = $twoPlayers->last();
-                $playersLeft = $playersLeft->diff($twoPlayers);
-
-                $g->update([
-                    'status' => 'started',
-                    'white_player_id' => $whitePlayer->id,
-                    'black_player_id' => $blackPlayer->id,
-                ]);
-                $g->calculateOddsForWhite();
-            }
-
-            $roundToStart->update(['status' => 'started']);
-
-            News::create([
-                'date' => now(),
-                'title' => 'Changement de round',
-                'content' =>
-                    'Le round actuel se termine après l\'affrontement mythique entre ' .
-                    $p1->username .
-                    ' et ' . $p2->username .
-                    ', dans lequel ' . $winner->username .
-                    ' a triomphé. Préparez-vous, le round suivant commence: ' .
-                    $roundToStart->name
-            ]);
-        }
     }
 }

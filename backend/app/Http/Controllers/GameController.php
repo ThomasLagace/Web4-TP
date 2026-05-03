@@ -6,6 +6,7 @@ use App\Http\Requests\GameRequest;
 use App\Http\Resources\GameCollection;
 use App\Http\Resources\GameResource;
 use App\Models\Game;
+use App\Services\GameService;
 
 class GameController extends Controller
 {
@@ -14,7 +15,7 @@ class GameController extends Controller
      */
     public function index() : GameCollection
     {
-        $games = Game::with(['round', 'whitePlayer', 'blackPlayer', 'winnerPlayer',])-> get();
+        $games = Game::with(['round', 'whitePlayer', 'blackPlayer', 'winnerPlayer',])->get();
         return new GameCollection($games);
     }
 
@@ -64,16 +65,8 @@ class GameController extends Controller
     /**
      * Finishes the game and display it's updated properties.
      */
-    public function finish(Game $game) : GameResource
+    public function finish(Game $game, GameService $gameService) : GameResource
     {
-        if ($game->status !== 'finished') {
-            $game->load(['whitePlayer.rank', 'blackPlayer.rank', 'round']);
-            $game->designateWinner();
-            $game->load(['winnerPlayer']);
-            $game->distributePointsToPlayers();
-            $game->update(['status' => 'finished']);
-        }
-
-        return new GameResource($game);
+        return new GameResource($gameService->finishGame($game));
     }
 }
