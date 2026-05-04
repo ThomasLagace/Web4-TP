@@ -53,16 +53,16 @@ class Game extends Model
         $this->save();
     }
 
-    public function distributePointsToPlayers()
+    public function distributePointsToPlayers(Tournament $tournament)
     {
         $this->loadMissing(['round', 'whitePlayer.rank', 'blackPlayer.rank', 'winnerPlayer']);
 
         if ($this->whitePlayer->id == $this->winnerPlayer->id) {
             $this->whitePlayer->calculatePoints($this->round->points_multiplier, $this->white_player_odds);
-            $this->blackPlayer->update(['is_eliminated' => 1]);
+            $tournament->players()->updateExistingPivot($this->blackPlayer->id, ['is_eliminated' => true]);
         } elseif ($this->blackPlayer->id == $this->winnerPlayer->id) {
-            $this->blackPlayer->calculatePoints($this->round->points_multiplier, (100 -$this->white_player_odds));
-            $this->whitePlayer->update(['is_eliminated' => 1]);
+            $this->blackPlayer->calculatePoints($this->round->points_multiplier, (100 - $this->white_player_odds));
+            $tournament->players()->updateExistingPivot($this->whitePlayer->id, ['is_eliminated' => true]);
         }
     }
 }

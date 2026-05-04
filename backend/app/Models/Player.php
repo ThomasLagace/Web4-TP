@@ -8,16 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Player extends Model
 {
     use HasFactory;
-    protected $fillable = ['username', 'affiliation', 'points', 'is_eliminated', 'tournament_id', 'rank_id'];
+    protected $fillable = ['username', 'affiliation', 'points', 'rank_id'];
 
     public function rank()
     {
         return $this->belongsTo(Rank::class);
-    }
-
-    public function tournament()
-    {
-        return $this->belongsTo(Tournament::class);
     }
 
     public function gamesAsWhite()
@@ -36,7 +31,9 @@ class Player extends Model
     }
 
     public function tournaments() {
-        return $this->hasMany(Tournament::class);
+        return $this->belongsToMany(Tournament::class)
+            ->withPivot('is_eliminated')
+            ->withTimestamps();
     }
 
     public function calculateRank()

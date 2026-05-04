@@ -5,15 +5,20 @@ namespace App\Services;
 use App\Models\Game;
 use App\Models\Player;
 use App\Models\Round;
+use App\Models\Tournament;
 use Illuminate\Database\Eloquent\Collection;
 
 class PairingService
 {
-    public function pairPlayers (Collection $players, Round $round, Game $game)
+    public function pairPlayers (Collection $players, Round $round, Game $game): Collection
     {
         $twoPlayers = $players->random(2);
 
-        foreach ($twoPlayers as $player) $player->update(['tournament_id' => $round->tournament->id]);
+        foreach ($twoPlayers as $player) {
+            $player->tournaments()->syncWithoutDetaching([
+                $round->tournament->id => ['is_eliminated' => false]
+            ]);
+        }
 
         $game->update([
             'white_player_id' => $twoPlayers->first()->id,
@@ -25,8 +30,10 @@ class PairingService
         return $twoPlayers;
     }
 
-    public function getPlayersLeft()
+    public function getPlayersLeft(Tournament $tournament): Collection
     {
-        return Player::where('is_eliminated', 0)->get();
+        return $tournament->players()
+            ->wherePivot('is_eliminated', false)
+            ->get();
     }
 }

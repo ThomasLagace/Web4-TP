@@ -40,7 +40,7 @@ class NewsService
     public function endRoundNews(Game $game, Round $roundToStart): void {
         News::create([
             'date' => now(),
-            'title' => 'Changement de round',
+            'title' => 'Changement de round - ' . $roundToStart->tournament->name,
             'content' =>
                 'Le round actuel se termine après l\'affrontement mythique entre ' .
                 $game->whitePlayer->username .
@@ -54,7 +54,7 @@ class NewsService
     public function endGameNews(Game $game) {
         News::create([
             'date' => now(),
-            'title' => 'Partie terminée',
+            'title' => 'Partie terminée - ' . $game->round->tournament->name,
             'content' => 'La partie entre ' .
                 $game->whitePlayer->username . " et " .
                 $game->blackPlayer->username . ' est terminée. Le vainqueur est ' .

@@ -15,7 +15,9 @@ class Tournament extends Model
 
     public function players()
     {
-        return $this->hasMany(Player::class);
+        return $this->belongsToMany(Player::class)
+            ->withPivot('is_eliminated')
+            ->withTimestamps();
     }
 
     public function winner()
