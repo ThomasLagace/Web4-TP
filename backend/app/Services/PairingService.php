@@ -10,6 +10,13 @@ use Illuminate\Database\Eloquent\Collection;
 
 class PairingService
 {
+    /**
+     * Take two random players from a collection and attach them to a given game
+     * @param Collection $players
+     * @param Round $round
+     * @param Game $game
+     * @return Collection
+     */
     public function pairPlayers (Collection $players, Round $round, Game $game): Collection
     {
         $twoPlayers = $players->random(2);
@@ -30,6 +37,11 @@ class PairingService
         return $twoPlayers;
     }
 
+    /**
+     * Return all the players that are not eliminated yet for a given tournament
+     * @param Tournament $tournament
+     * @return Collection
+     */
     public function getPlayersLeft(Tournament $tournament): Collection
     {
         return $tournament->players()

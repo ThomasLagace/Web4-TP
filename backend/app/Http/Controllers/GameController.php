@@ -15,7 +15,7 @@ class GameController extends Controller
      */
     public function index() : GameCollection
     {
-        $games = Game::with(['round', 'whitePlayer', 'blackPlayer', 'winnerPlayer',])->get();
+        $games = Game::with(['round', 'whitePlayer', 'blackPlayer', 'winnerPlayer',])->paginate(15);
         return new GameCollection($games);
     }
 

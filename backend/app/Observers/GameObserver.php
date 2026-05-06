@@ -29,7 +29,7 @@ class GameObserver
 
             if ($finishedGames === $totalGames) {
                 $round->update(['status' => 'finished']);
-                $response = $this->roundService->changeRound($game, $round);
+                $response = $this->roundService->changeRound($game);
 
                 if ($response === "tournament ended")
                 {

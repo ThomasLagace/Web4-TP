@@ -12,6 +12,11 @@ class RoundService
 {
     public function __construct (private NewsService $newsService, private PairingService $pairingService) {}
 
+    /**
+     * Creation of every round for a given tournament
+     * @param Tournament $tournament
+     * @return mixed
+     */
     public function createRoundsForTournament (Tournament $tournament) {
 
         $data = [
@@ -25,6 +30,11 @@ class RoundService
         return $tournament->fresh()->rounds;
     }
 
+    /**
+     * Creation of every game for every round of a given collection
+     * @param Collection $rounds
+     * @return void
+     */
     public function createGamesForRounds (Collection $rounds) {
 
         $players = Player::with(['rank', 'tournaments'])->get();
@@ -36,10 +46,10 @@ class RoundService
                 2 => 2,
                 3 => 1,
             };
-            if ($gamesCount == 8)
+
+            for ($i = 0; $i < $gamesCount; $i++)
             {
-                for ($i = 0; $i < $gamesCount; $i++)
-                {
+                if ($gamesCount == 8) {
                     $game = Game::create([
                         'start_time' => now(),
                         'status' => 'started',
@@ -47,19 +57,19 @@ class RoundService
                     ]);
                     $twoPlayers = $this->pairingService->pairPlayers($players, $round, $game);
                     $players = $players->diff($twoPlayers);
-                }
-            }
-            else
-            {
-                for ($i = 0; $i < $gamesCount; $i++)
-                {
+                } else {
                     Game::create(['start_time' => now(), 'status' => 'pending', 'round_id' => $round->id]);
                 }
             }
         }
     }
 
-    public function changeRound (Game $game, Round $round) {
+    /**
+     * Change the active round of the tournament for the next one
+     * @param Game $game
+     * @return string
+     */
+    public function changeRound (Game $game) {
 
         $game->load(['whitePlayer', 'blackPlayer', 'winnerPlayer', 'round.tournament']);
         $roundToStart = Round::where('tournament_id', $game->round->tournament->id)

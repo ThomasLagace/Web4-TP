@@ -9,6 +9,12 @@ class TournamentService
 {
     public function __construct(private RoundService $roundService, private NewsService $newsService) {}
 
+    /**
+     * Handle the ending of a tournament
+     * @param Tournament $tournament
+     * @param Game $game
+     * @return void
+     */
     public function endTournament(Tournament $tournament, Game $game)
     {
         $tournament->update(['winner_id' => $game->winner_player_id, 'status' => 'finished']);
@@ -17,6 +23,11 @@ class TournamentService
         $this->newsService->endTournamentNews($tournament, $game);
     }
 
+    /**
+     * Handle the creation of a tournament
+     * @param array $tournament
+     * @return Tournament
+     */
     public function createTournament(array $tournament) : Tournament
     {
         $tournament = Tournament::create($tournament);

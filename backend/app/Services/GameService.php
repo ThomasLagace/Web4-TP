@@ -6,6 +6,11 @@ use App\Models\Game;
 
 class GameService
 {
+    /**
+     * Handle the end of a game
+     * @param Game $game
+     * @return Game
+     */
     public function finishGame(Game $game): Game
     {
         if ($game->status !== 'finished') {

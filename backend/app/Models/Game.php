@@ -36,6 +36,10 @@ class Game extends Model
         return $this->belongsTo(Player::class, 'winner_player_id');
     }
 
+    /**
+     * Calculate the chances of the white player to win the game
+     * @return void
+     */
     public function calculateOddsForWhite()
     {
         if ($this->whitePlayer !== null && $this->blackPlayer !== null) {
@@ -46,6 +50,10 @@ class Game extends Model
         }
     }
 
+    /**
+     * Returns the winner of the game
+     * @return void
+     */
     public function designateWinner()
     {
         $winner = collect([$this->whitePlayer, $this->blackPlayer])->random();
@@ -53,6 +61,11 @@ class Game extends Model
         $this->save();
     }
 
+    /**
+     * Updates the points of the winner player with the response of the method calculatePoints
+     * @param Tournament $tournament
+     * @return void
+     */
     public function distributePointsToPlayers(Tournament $tournament)
     {
         $this->loadMissing(['round', 'whitePlayer.rank', 'blackPlayer.rank', 'winnerPlayer']);

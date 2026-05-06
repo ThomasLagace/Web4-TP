@@ -9,6 +9,11 @@ use App\Models\Tournament;
 
 class NewsService
 {
+    /**
+     * Create News for the beginning of a tournament
+     * @param Tournament $tournament
+     * @return void
+     */
     public function startTournamentNews(Tournament $tournament): void {
         News::create([
             'date' => now(),
@@ -20,6 +25,12 @@ class NewsService
         ]);
     }
 
+    /**
+     * Create News for the end of a tournament
+     * @param Tournament $tournament
+     * @param Game $game
+     * @return void
+     */
     public function endTournamentNews(Tournament $tournament, Game $game): void {
         News::create([
             'date' => now(),
@@ -37,6 +48,12 @@ class NewsService
         ]);
     }
 
+    /**
+     * Create News for the end of a round
+     * @param Game $game
+     * @param Round $roundToStart
+     * @return void
+     */
     public function endRoundNews(Game $game, Round $roundToStart): void {
         News::create([
             'date' => now(),
@@ -51,6 +68,11 @@ class NewsService
         ]);
     }
 
+    /**
+     * Create News for the end of a game
+     * @param Game $game
+     * @return void
+     */
     public function endGameNews(Game $game) {
         News::create([
             'date' => now(),

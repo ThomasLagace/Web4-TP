@@ -36,6 +36,10 @@ class Player extends Model
             ->withTimestamps();
     }
 
+    /**
+     * Calculates the rank of the player by its amount of points
+     * @return void
+     */
     public function calculateRank()
     {
         $rank = Rank::where('min_points', '<=', $this->points)
@@ -50,6 +54,12 @@ class Player extends Model
         }
     }
 
+    /**
+     * Calculate the points obtained by the winner player
+     * @param $multiplier
+     * @param $odds
+     * @return void
+     */
     public function calculatePoints($multiplier, $odds)
     {
         $this->update(['points' => $this->points + $multiplier * (100 - $odds) + 400]);
