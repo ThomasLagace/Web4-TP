@@ -1,23 +1,45 @@
 import { useEffect, useState } from 'react'
-import NewsCard from '../components/NewsCard'
-import newsClient from '../api/newsClient'
+import { useNavigate } from 'react-router-dom'
+import NewsCard from '../../components/NewsCard'
+import newsClient from '../../api/newsClient'
 
 export default function NewsPage() {
+    const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(true)
   const [newsList, setNewsList] = useState([])
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    newsClient.all().then((res) => {
-      setNewsList(res.data["data"])
-      setIsLoading(false)
-    })
+    newsClient.all()
+      .then((res) => {
+        setNewsList(res.data["data"])
+      })
+      .catch((err) => {
+        setError('Une erreur est survenue lors du chargement.')
+        console.error(err)
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
   }, [])
 
   return (
     <div className="container py-4">
-      <h1 className="mb-4">Actualités</h1>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h1>Actualités</h1>
+        <button
+          className="btn btn-success"
+          onClick={() => navigate('/news/create')}
+        >
+          + Nouvelle actualité
+        </button>
+      </div>
       {isLoading ? (
         <p className="text-muted">Chargement...</p>
+      ) : error ? (
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
       ) : newsList.length === 0 ? (
         <p className="text-muted">Aucune actualité trouvée.</p>
       ) : (

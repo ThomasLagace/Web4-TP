@@ -9,17 +9,25 @@ export default function CreateNewsPage() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState('')
 
   const handleSubmit = (e) => {
     e.preventDefault()
 
+    setError('')
     setIsSaving(true)
 
-    newsClient.store(date, title, content).then(() => {
-      navigate('/news')
-    }).finally(() => {
-      setIsSaving(false)
-    })
+    newsClient.store(date, title, content)
+      .then(() => {
+        navigate('/news')
+      })
+      .catch((err) => {
+        setError('Une erreur est survenue lors de la création de l\'actualité.')
+        console.error(err)
+      })
+      .finally(() => {
+        setIsSaving(false)
+      })
   }
 
   return (
@@ -29,6 +37,12 @@ export default function CreateNewsPage() {
       <form onSubmit={handleSubmit}>
         <div className="card">
           <div className="card-body">
+
+          {error && (
+            <div className="alert alert-danger mb-3" role="alert">
+              {error}
+            </div>
+          )}
 
             <div className="mb-3">
               <label className="form-label">Date</label>
