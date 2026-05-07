@@ -19,6 +19,18 @@ export default function Navbar() {
           <li className="nav-item active">
             <Link className="nav-link" to="/news">Actualités</Link>
           </li>
+          <li className="nav-item active">
+            <Link className="nav-link" to="/players">Joueurs</Link>
+          </li>
+          <li className="nav-item active">
+            <Link className="nav-link" to="/ranks">Classements</Link>
+          </li>
+          <li className="nav-item active">
+            <Link className="nav-link" to="/rounds">Tours</Link>
+          </li>
+          <li className="nav-item active">
+            <Link className="nav-link" to="/tournaments">Tournois</Link>
+          </li>
         </ul>
       </div>
     </nav>
