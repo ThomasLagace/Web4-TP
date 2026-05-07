@@ -68,7 +68,7 @@ export default function RoundPage() {
                     </li>
                     <li className="mb-2">
                       <span className="text-muted">Multiplicateur de elo :</span>{' '}
-                      <strong>x{round.pointsMultiplier}</strong>
+                      <strong>x{round.points_multiplier}</strong>
                     </li>
                   </ul>
                 </div>
@@ -84,12 +84,13 @@ export default function RoundPage() {
               {games.map((game) => (
                 <div className="col" key={game.gameId}>
                   <GameCard
-                    gameId={game.gameId}
+                    gameId={game.id}
                     status={game.status}
-                    startTime={game.startTime}
-                    whitePlayerName={game.whitePlayerName}
-                    blackPlayerName={game.blackPlayerName}
+                    startTime={game.start_time}
+                    whitePlayerName={game.white_player?.username ?? "À determiner"}
+                    blackPlayerName={game.black_player?.username ?? "À determiner"}
                   />
+                  { console.log(game) }
                 </div>
               ))}
             </div>

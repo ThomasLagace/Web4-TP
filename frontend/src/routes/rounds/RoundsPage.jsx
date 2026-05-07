@@ -51,7 +51,7 @@ export default function RoundsPage() {
                 roundId={round.id}
                 name={round.name}
                 status={round.status}
-                pointsMultiplier={round.pointsMultiplier}
+                pointsMultiplier={round.points_multiplier}
               />
             </div>
           ))}
