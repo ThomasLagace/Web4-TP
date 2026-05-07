@@ -23,10 +23,10 @@ export default function Navbar() {
             <Link className="nav-link" to="/players">Joueurs</Link>
           </li>
           <li className="nav-item active">
-            <Link className="nav-link" to="/ranks">Classements</Link>
+            <Link className="nav-link" to="/ranks">Rangs</Link>
           </li>
           <li className="nav-item active">
-            <Link className="nav-link" to="/rounds">Tours</Link>
+            <Link className="nav-link" to="/rounds">Rondes</Link>
           </li>
           <li className="nav-item active">
             <Link className="nav-link" to="/tournaments">Tournois</Link>
