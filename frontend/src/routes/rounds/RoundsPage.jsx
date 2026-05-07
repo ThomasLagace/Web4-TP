@@ -1,22 +1,44 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import RoundCard from '../../components/RoundCard'
 import roundsClient from '../../api/roundsClient'
 
 export default function RoundsPage() {
+  const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
   const [roundsList, setRoundsList] = useState([])
 
   useEffect(() => {
-    roundsClient.all().then((res) => {
-      setRoundsList(res.data["data"])
-    }).finally(() => {
-      setIsLoading(false)
-    })
+    roundsClient.all()
+      .then((res) => {
+        setRoundsList(res.data["data"])
+      })
+      .catch((err) => {
+        setError('Une erreur est survenue lors du chargement.')
+        console.error(err)
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
   }, [])
 
   return (
     <div className="container py-4">
-      <h1 className="mb-4">Rondes</h1>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h1>Rondes</h1>
+        <button
+          className="btn btn-primary"
+          onClick={() => navigate('/rounds/create')}
+        >
+          + Nouveau round
+        </button>
+      </div>
+
+      {error && (
+        <div className="alert alert-danger" role="alert">{error}</div>
+      )}
+
       {isLoading ? (
         <p className="text-muted">Chargement...</p>
       ) : roundsList.length === 0 ? (

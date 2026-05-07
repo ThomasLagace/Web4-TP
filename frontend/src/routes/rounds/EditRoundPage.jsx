@@ -18,127 +18,141 @@ export default function EditRoundPage() {
 
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     Promise.all([
       roundsClient.show(id),
       tournamentsClient.all(),
     ])
-    .then(([roundRes, tournamentsRes]) => {
-      const round = roundRes.data.data
+      .then(([roundRes, tournamentsRes]) => {
+        const round = roundRes.data.data
 
-      setName(round.name)
-      setStatus(round.status)
-      setPointsMultiplier(round.points_multiplier)
-      setTournamentId(round.tournament_id)
+        setName(round.name)
+        setStatus(round.status)
+        setPointsMultiplier(round.points_multiplier)
+        setTournamentId(round.tournament_id)
 
-      setTournaments(tournamentsRes.data.data)
-    })
-    .finally(() => {
-      setIsLoading(false)
-    })
+        setTournaments(tournamentsRes.data.data)
+      })
+      .catch((err) => {
+        setError('Une erreur est survenue lors du chargement.')
+        console.error(err)
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
   }, [id])
 
   const handleSubmit = (e) => {
     e.preventDefault()
 
+    setError('')
     setIsSaving(true)
 
     roundsClient.update(
       id,
       name,
       status,
-      pointsMultiplier,
+      parseFloat(pointsMultiplier || 1),
       tournamentId
     )
-    .then(() => {
-      navigate(`/rounds/${id}`)
-    })
-    .finally(() => {
-      setIsSaving(false)
-    })
-  }
-
-  if (isLoading) {
-    return (
-      <div className="container py-4">
-        <p className="text-muted">Chargement...</p>
-      </div>
-    )
+      .then(() => {
+        navigate(`/rounds/${id}`)
+      })
+      .catch((err) => {
+        setError('Une erreur est survenue lors de la mise à jour du round.')
+        console.error(err)
+      })
+      .finally(() => {
+        setIsSaving(false)
+      })
   }
 
   return (
     <div className="container py-4">
       <h1 className="mb-4">Modifier le round</h1>
 
-      <form onSubmit={handleSubmit}>
-        <div className="card">
-          <div className="card-body">
+      {isLoading ? (
+        <p className="text-muted">Chargement...</p>
+      ) : error ? (
+        <div className="alert alert-danger" role="alert">{error}</div>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          <div className="card">
+            <div className="card-body">
 
-            <div className="mb-3">
-              <label className="form-label">Nom</label>
+              {error && (
+                <div className="alert alert-danger mb-3" role="alert">
+                  {error}
+                </div>
+              )}
 
-              <input
-                type="text"
-                className="form-control"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
+              <div className="mb-3">
+                <label className="form-label">Nom</label>
 
-            <div className="mb-3">
-              <label className="form-label">Statut</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
 
-              <input
-                type="text"
-                className="form-control"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-              />
-            </div>
+              <div className="mb-3">
+                <label className="form-label">Statut</label>
 
-            <div className="mb-3">
-              <label className="form-label">Multiplicateur de points</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                />
+              </div>
 
-              <input
-                type="number"
-                step="0.1"
-                className="form-control"
-                value={pointsMultiplier}
-                onChange={(e) => setPointsMultiplier(e.target.value)}
-              />
-            </div>
+              <div className="mb-3">
+                <label className="form-label">Multiplicateur de points</label>
 
-            <div className="mb-3">
-              <label className="form-label">Tournoi</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  className="form-control"
+                  value={pointsMultiplier}
+                  onChange={(e) => setPointsMultiplier(parseFloat(e.target.value || 1))}
+                />
+              </div>
 
-              <select
-                className="form-select"
-                value={tournamentId}
-                onChange={(e) => setTournamentId(e.target.value)}
+              <div className="mb-3">
+                <label className="form-label">Tournoi</label>
+
+                <select
+                  className="form-select"
+                  value={tournamentId}
+                  onChange={(e) => setTournamentId(e.target.value)}
+                >
+                  {tournaments.map((tournament) => (
+                    <option
+                      key={tournament.id}
+                      value={tournament.id}
+                    >
+                      {tournament.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={isSaving}
               >
-                {tournaments.map((tournament) => (
-                  <option
-                    key={tournament.id}
-                    value={tournament.id}
-                  >
-                    {tournament.name}
-                  </option>
-                ))}
-              </select>
+                {isSaving ? 'Enregistrement...' : 'Sauvegarder'}
+              </button>
+
             </div>
-
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={isSaving}
-            >
-              {isSaving ? 'Enregistrement...' : 'Sauvegarder'}
-            </button>
-
           </div>
-        </div>
-      </form>
+        </form>
+      )}
     </div>
   )
 }

@@ -1,22 +1,44 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import TournamentCard from '../../components/TournamentCard'
 import tournamentsClient from '../../api/tournamentsClient'
 
 export default function TournamentsPage() {
+  const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
   const [tournamentsList, setTournamentsList] = useState([])
 
   useEffect(() => {
-    tournamentsClient.all().then((res) => {
-      setTournamentsList(res.data["data"])
-    }).finally(() => {
-      setIsLoading(false)
-    })
+    tournamentsClient.all()
+      .then((res) => {
+        setTournamentsList(res.data["data"])
+      })
+      .catch((err) => {
+        setError('Une erreur est survenue lors du chargement.')
+        console.error(err)
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
   }, [])
 
   return (
     <div className="container py-4">
-      <h1 className="mb-4">Tournois</h1>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h1>Tournois</h1>
+        <button
+          className="btn btn-primary"
+          onClick={() => navigate('/tournaments/create')}
+        >
+          + Nouveau tournoi
+        </button>
+      </div>
+
+      {error && (
+        <div className="alert alert-danger" role="alert">{error}</div>
+      )}
+
       {isLoading ? (
         <p className="text-muted">Chargement...</p>
       ) : tournamentsList.length === 0 ? (

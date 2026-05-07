@@ -12,24 +12,30 @@ export default function CreateTournamentPage() {
   const [prize, setPrize] = useState('')
 
   const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState('')
 
   const handleSubmit = (e) => {
     e.preventDefault()
 
+    setError('')
     setIsSaving(true)
 
     tournamentsClient.store(
       name,
       startDate,
       endDate,
-      prize
+      parseFloat(prize || 0)
     )
-    .then(() => {
-      navigate('/tournaments')
-    })
-    .finally(() => {
-      setIsSaving(false)
-    })
+      .then(() => {
+        navigate('/tournaments')
+      })
+      .catch((err) => {
+        setError('Une erreur est survenue lors de la création du tournoi.')
+        console.error(err)
+      })
+      .finally(() => {
+        setIsSaving(false)
+      })
   }
 
   return (
@@ -39,6 +45,12 @@ export default function CreateTournamentPage() {
       <form onSubmit={handleSubmit}>
         <div className="card">
           <div className="card-body">
+
+            {error && (
+              <div className="alert alert-danger mb-3" role="alert">
+                {error}
+              </div>
+            )}
 
             <div className="mb-3">
               <label className="form-label">Nom</label>
@@ -81,7 +93,7 @@ export default function CreateTournamentPage() {
                 step="0.01"
                 className="form-control"
                 value={prize}
-                onChange={(e) => setPrize(e.target.value)}
+                onChange={(e) => setPrize(parseFloat(e.target.value || 0))}
               />
             </div>
 

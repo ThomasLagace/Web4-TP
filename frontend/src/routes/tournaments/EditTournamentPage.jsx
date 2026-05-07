@@ -15,6 +15,7 @@ export default function EditTournamentPage() {
 
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     tournamentsClient.show(id)
@@ -26,6 +27,10 @@ export default function EditTournamentPage() {
         setEndDate(tournament.end_date)
         setPrize(tournament.prize)
       })
+      .catch((err) => {
+        setError('Une erreur est survenue lors du chargement.')
+        console.error(err)
+      })
       .finally(() => {
         setIsLoading(false)
       })
@@ -34,6 +39,7 @@ export default function EditTournamentPage() {
   const handleSubmit = (e) => {
     e.preventDefault()
 
+    setError('')
     setIsSaving(true)
 
     tournamentsClient.update(
@@ -41,88 +47,96 @@ export default function EditTournamentPage() {
       name,
       startDate,
       endDate,
-      prize
+      parseFloat(prize || 0)
     )
-    .then(() => {
-      navigate(`/tournaments/${id}`)
-    })
-    .finally(() => {
-      setIsSaving(false)
-    })
-  }
-
-  if (isLoading) {
-    return (
-      <div className="container py-4">
-        <p className="text-muted">Chargement...</p>
-      </div>
-    )
+      .then(() => {
+        navigate(`/tournaments/${id}`)
+      })
+      .catch((err) => {
+        setError('Une erreur est survenue lors de la mise à jour du tournoi.')
+        console.error(err)
+      })
+      .finally(() => {
+        setIsSaving(false)
+      })
   }
 
   return (
     <div className="container py-4">
       <h1 className="mb-4">Modifier le tournoi</h1>
 
-      <form onSubmit={handleSubmit}>
-        <div className="card">
-          <div className="card-body">
+      {isLoading ? (
+        <p className="text-muted">Chargement...</p>
+      ) : error ? (
+        <div className="alert alert-danger" role="alert">{error}</div>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          <div className="card">
+            <div className="card-body">
 
-            <div className="mb-3">
-              <label className="form-label">Nom</label>
+              {error && (
+                <div className="alert alert-danger mb-3" role="alert">
+                  {error}
+                </div>
+              )}
 
-              <input
-                type="text"
-                className="form-control"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+              <div className="mb-3">
+                <label className="form-label">Nom</label>
+
+                <input
+                  type="text"
+                  className="form-control"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Date de début</label>
+
+                <input
+                  type="date"
+                  className="form-control"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Date de fin</label>
+
+                <input
+                  type="date"
+                  className="form-control"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Prix</label>
+
+                <input
+                  type="number"
+                  step="0.01"
+                  className="form-control"
+                  value={prize}
+                  onChange={(e) => setPrize(parseFloat(e.target.value || 0))}
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={isSaving}
+              >
+                {isSaving ? 'Enregistrement...' : 'Sauvegarder'}
+              </button>
+
             </div>
-
-            <div className="mb-3">
-              <label className="form-label">Date de début</label>
-
-              <input
-                type="date"
-                className="form-control"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">Date de fin</label>
-
-              <input
-                type="date"
-                className="form-control"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">Prix</label>
-
-              <input
-                type="number"
-                step="0.01"
-                className="form-control"
-                value={prize}
-                onChange={(e) => setPrize(e.target.value)}
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={isSaving}
-            >
-              {isSaving ? 'Enregistrement...' : 'Sauvegarder'}
-            </button>
-
           </div>
-        </div>
-      </form>
+        </form>
+      )}
     </div>
   )
 }
