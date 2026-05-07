@@ -60,7 +60,7 @@ export default function CreateRoundPage() {
 
   return (
     <div className="container py-4">
-      <h1 className="mb-4">Nouveau round</h1>
+      <h1 className="mb-4">Nouvelle ronde</h1>
 
       {isLoading ? (
         <p className="text-muted">Chargement...</p>
