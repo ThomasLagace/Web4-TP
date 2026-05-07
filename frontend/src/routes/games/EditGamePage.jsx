@@ -22,6 +22,7 @@ export default function EditGamePage() {
 
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     Promise.all([
@@ -29,27 +30,32 @@ export default function EditGamePage() {
       roundsClient.all(),
       playersClient.all(),
     ])
-    .then(([gameRes, roundsRes, playersRes]) => {
-      const game = gameRes.data.data
+      .then(([gameRes, roundsRes, playersRes]) => {
+        const game = gameRes.data.data
 
-      setStartTime(game.start_time)
-      setStatus(game.status)
-      setRoundId(game.round_id)
-      setWhitePlayerId(game.white_player_id)
-      setBlackPlayerId(game.black_player_id)
-      setWinnerPlayerId(game.winner_player_id || '')
+        setStartTime(game.start_time)
+        setStatus(game.status)
+        setRoundId(game.round_id)
+        setWhitePlayerId(game.white_player_id)
+        setBlackPlayerId(game.black_player_id)
+        setWinnerPlayerId(game.winner_player_id || '')
 
-      setRounds(roundsRes.data.data)
-      setPlayers(playersRes.data.data)
-    })
-    .finally(() => {
-      setIsLoading(false)
-    })
+        setRounds(roundsRes.data.data)
+        setPlayers(playersRes.data.data)
+      })
+      .catch((err) => {
+        setError('Une erreur est survenue lors du chargement.')
+        console.error(err)
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
   }, [id])
 
   const handleSubmit = (e) => {
     e.preventDefault()
 
+    setError('')
     setIsSaving(true)
 
     gamesClient.update(
@@ -61,18 +67,28 @@ export default function EditGamePage() {
       blackPlayerId,
       winnerPlayerId
     )
-    .then(() => {
-      navigate(`/games/${id}`)
-    })
-    .finally(() => {
-      setIsSaving(false)
-    })
+      .then(() => {
+        navigate(`/games/${id}`)
+      })
+      .catch((err) => {
+        setError('Une erreur est survenue lors de la mise à jour de la partie.')
+        console.error(err)
+      })
+      .finally(() => {
+        setIsSaving(false)
+      })
   }
 
   if (isLoading) {
     return (
       <div className="container py-4">
-        <p className="text-muted">Chargement...</p>
+        {error ? (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        ) : (
+          <p className="text-muted">Chargement...</p>
+        )}
       </div>
     )
   }
@@ -84,6 +100,12 @@ export default function EditGamePage() {
       <form onSubmit={handleSubmit}>
         <div className="card">
           <div className="card-body">
+
+            {error && (
+              <div className="alert alert-danger mb-3" role="alert">
+                {error}
+              </div>
+            )}
 
             <div className="mb-3">
               <label className="form-label">Date et heure</label>
