@@ -27,7 +27,10 @@ export default function RanksPage() {
     <div className="container py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1>Rangs</h1>
-        <button className="btn btn-success" onClick={() => navigate('/ranks/create')}>
+        <button
+          className="btn btn-success"
+          onClick={() => navigate('/ranks/create')}
+        >
           + Nouveau rang
         </button>
       </div>

@@ -27,7 +27,10 @@ export default function PlayersPage() {
     <div className="container py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1>Joueurs</h1>
-        <button className="btn btn-success" onClick={() => navigate('/players/create')}>
+        <button
+          className="btn btn-success"
+          onClick={() => navigate('/players/create')}
+        >
           + Nouveau joueur
         </button>
       </div>
