@@ -46,15 +46,18 @@ export default function TournamentPage() {
             >
               &larr; Retour aux tournois
             </button>
+          </div>
+
+          <h1 className="mb-4">{tournament.name}</h1>
+
+          <div className="mb-4 d-flex gap-2">
             <button
-              className="btn btn-primary"
+              className="btn btn-warning"
               onClick={() => navigate(`/tournaments/${id}/edit`)}
             >
               Modifier
             </button>
           </div>
-
-          <h1 className="mb-4">{tournament.name}</h1>
 
           <div className="row g-4 mb-5">
             <div className="col-md-6">
@@ -99,7 +102,7 @@ export default function TournamentPage() {
                     roundId={round.id}
                     name={round.name}
                     status={round.status}
-                    pointsMultiplier={round.pointsMultiplier}
+                    pointsMultiplier={round.points_multiplier}
                   />
                 </div>
               ))}
