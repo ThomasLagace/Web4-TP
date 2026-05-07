@@ -47,8 +47,8 @@ export default function RanksPage() {
               <RankCard
                 rankId={rank.id}
                 name={rank.name}
-                minPoints={rank.minPoints}
-                maxPoints={rank.maxPoints}
+                minPoints={rank.min_points}
+                maxPoints={rank?.max_points ?? "infinie" }
               />
             </div>
           ))}

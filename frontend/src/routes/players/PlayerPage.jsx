@@ -40,8 +40,17 @@ export default function PlayerPage() {
             &larr; Retour aux joueurs
           </button>
 
-              <h1 className="mb-1">{player.username}</h1>
+          <h1 className="mb-1">{player.username}</h1>
           <p className="text-muted mb-4">{player.affiliation}</p>
+
+          <div className="mb-4 d-flex gap-2">
+            <button
+              className="btn btn-warning"
+              onClick={() => navigate(`/players/${id}/edit`)}
+            >
+              Modifier
+            </button>
+          </div>
 
           <div className="row g-4">
             <div className="col-md-6">

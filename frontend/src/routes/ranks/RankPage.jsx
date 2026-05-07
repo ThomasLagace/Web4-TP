@@ -40,7 +40,16 @@ export default function RankPage() {
             &larr; Retour aux rangs
           </button>
 
-              <h1 className="mb-4">{rank.name}</h1>
+          <h1 className="mb-4">{rank.name}</h1>
+
+          <div className="mb-4 d-flex gap-2">
+            <button
+              className="btn btn-warning"
+              onClick={() => navigate(`/ranks/${id}/edit`)}
+            >
+              Modifier
+            </button>
+          </div>
 
           <div className="row g-4">
             <div className="col-md-6">
@@ -50,11 +59,11 @@ export default function RankPage() {
                   <ul className="list-unstyled mb-0">
                     <li className="mb-2">
                       <span className="text-muted">Elo minimum :</span>{' '}
-                      <strong>{rank.minPoints}</strong>
+                      <strong>{rank.min_points}</strong>
                     </li>
                     <li className="mb-2">
                       <span className="text-muted">Elo maximum :</span>{' '}
-                      <strong>{rank.maxPoints}</strong>
+                      <strong>{rank.max_points}</strong>
                     </li>
                   </ul>
                 </div>
