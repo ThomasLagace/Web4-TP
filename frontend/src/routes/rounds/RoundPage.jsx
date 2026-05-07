@@ -46,15 +46,18 @@ export default function RoundPage() {
             >
               &larr; Retour aux rondes
             </button>
+          </div>
+
+          <h1 className="mb-4">{round.name}</h1>
+
+          <div className="mb-4 d-flex gap-2">
             <button
-              className="btn btn-primary"
+              className="btn btn-warning"
               onClick={() => navigate(`/rounds/${id}/edit`)}
             >
               Modifier
             </button>
           </div>
-
-          <h1 className="mb-4">{round.name}</h1>
 
           <div className="row g-4 mb-5">
             <div className="col-md-6">
@@ -90,7 +93,6 @@ export default function RoundPage() {
                     whitePlayerName={game.white_player?.username ?? "À determiner"}
                     blackPlayerName={game.black_player?.username ?? "À determiner"}
                   />
-                  { console.log(game) }
                 </div>
               ))}
             </div>

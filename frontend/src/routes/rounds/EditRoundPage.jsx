@@ -115,10 +115,10 @@ export default function EditRoundPage() {
 
                 <input
                   type="number"
-                  step="0.1"
                   className="form-control"
+                  min={1}
                   value={pointsMultiplier}
-                  onChange={(e) => setPointsMultiplier(parseFloat(e.target.value || 1))}
+                  onChange={(e) => setPointsMultiplier(parseInt(e.target.value || 1))}
                 />
               </div>
 
