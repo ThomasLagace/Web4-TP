@@ -6,7 +6,7 @@ use App\Http\Requests\GameRequest;
 use App\Http\Resources\GameCollection;
 use App\Http\Resources\GameResource;
 use App\Models\Game;
-use App\Models\News;
+use App\Services\GameService;
 
 class GameController extends Controller
 {
@@ -15,7 +15,7 @@ class GameController extends Controller
      */
     public function index() : GameCollection
     {
-        $games = Game::with(['round', 'whitePlayer', 'blackPlayer', 'winnerPlayer',])-> get();
+        $games = Game::with(['round', 'whitePlayer', 'blackPlayer', 'winnerPlayer',])->paginate(15);
         return new GameCollection($games);
     }
 
@@ -44,9 +44,12 @@ class GameController extends Controller
      */
     public function update(GameRequest $request, Game $game) : GameResource
     {
-        $game->update($request->validated());
-        $game->calculateOddsForWhite();
-        $game->load(['whitePlayer', 'blackPlayer', 'winnerPlayer', 'round']);
+        if ($game->status !== 'finished') {
+            $game->update($request->validated());
+            $game->calculateOddsForWhite();
+            $game->load(['whitePlayer', 'blackPlayer', 'winnerPlayer', 'round']);
+        }
+
         return new GameResource($game);
     }
 
@@ -62,20 +65,8 @@ class GameController extends Controller
     /**
      * Finishes the game and display it's updated properties.
      */
-    public function finish(Game $game) : GameResource
+    public function finish(Game $game, GameService $gameService) : GameResource
     {
-        $game->load(['whitePlayer.rank', 'blackPlayer.rank', 'round']);
-        $game->designateWinner();
-        $game->load(['winnerPlayer']);
-        $game->distributePointsToPlayers();
-        $game->update(['status' => 'finished']);
-        News::create([
-            'date' => now(),
-            'title' => 'Partie terminée', 'content' => 'La partie entre ' .
-                $game->whitePlayer->username . " et " .
-                $game->blackPlayer->username . ' est terminée. Le vainqueur est ' .
-                $game->winnerPlayer->username
-        ]);
-        return new GameResource($game);
+        return new GameResource($gameService->finishGame($game));
     }
 }

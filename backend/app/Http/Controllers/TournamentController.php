@@ -6,6 +6,7 @@ use App\Http\Requests\TournamentRequest;
 use App\Http\Resources\TournamentCollection;
 use App\Http\Resources\TournamentResource;
 use App\Models\Tournament;
+use App\Services\NewsService;
 use App\Services\TournamentService;
 
 class TournamentController extends Controller
@@ -22,9 +23,10 @@ class TournamentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(TournamentRequest $request, TournamentService $service) : TournamentResource
+    public function store(TournamentRequest $request, TournamentService $tournamentService, NewsService $newsService) : TournamentResource
     {
-        $tournament = $service->createTournament($request->validated());
+        $tournament = $tournamentService->createTournament($request->validated());
+        $newsService->startTournamentNews($tournament);
         return new TournamentResource($tournament);
     }
 
@@ -52,11 +54,5 @@ class TournamentController extends Controller
     {
         $t->delete();
         return response()->noContent();
-    }
-
-    public function close(Tournament $t) : TournamentResource
-    {
-        $t->update(['status' => 'finished']);
-        return new TournamentResource($t);
     }
 }

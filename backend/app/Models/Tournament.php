@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tournament extends Model
 {
-    protected $fillable = ['name', 'status', 'start_date', 'end_date', 'prize'];
+    protected $fillable = ['name', 'status', 'start_date', 'end_date', 'prize', 'winner_id'];
 
     public function rounds()
     {
@@ -15,6 +15,13 @@ class Tournament extends Model
 
     public function players()
     {
-        return $this->hasMany(Player::class);
+        return $this->belongsToMany(Player::class)
+            ->withPivot('is_eliminated')
+            ->withTimestamps();
+    }
+
+    public function winner()
+    {
+        return $this->belongsTo(Player::class, 'winner_id');
     }
 }

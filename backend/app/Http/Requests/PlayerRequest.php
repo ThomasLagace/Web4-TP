@@ -26,8 +26,6 @@ class PlayerRequest extends FormRequest
             'username' => ['required', 'string', 'max:30'],
             'affiliation' => ['required', 'string', 'max:70'],
             'points' => ['required', 'integer'],
-            'is_eliminated' => ['boolean'],
-            'tournament_id' => ['integer', 'exists:tournaments,id'],
         ];
     }
 }

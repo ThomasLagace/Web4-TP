@@ -15,55 +15,85 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-// route imbriquée pour visualiser les rounds d'un tournoi spécifique
-Route::get('/tournaments/{tournament}/rounds', [TournamentRoundController::class, 'showRoundsById']);
+Route::middleware('throttle:100,1')->group(function () {
 
-// route imbriquée pour visualiser les parties d'un round spécifique
-Route::get('/rounds/{round}/games', [RoundGameController::class, 'showGamesById']);
+    // Route imbriquée pour visualiser les rounds d'un tournoi spécifique
+    Route::get('/tournaments/{tournament}/rounds', [TournamentRoundController::class, 'showRoundsById']);
 
-// route '/' pour voir toutes les news des parties + filtrage (TODO)
-Route::prefix('/news')
-    ->controller(NewsController::class)
-    ->group(function () {
-        Route::get('/', 'index');
-    });
+    // Route imbriquée pour visualiser les parties d'un round spécifique
+    Route::get('/rounds/{round}/games', [RoundGameController::class, 'showGamesById']);
 
-// route '/' pour observer les ranks
-Route::prefix('/ranks')
-    ->controller(RankController::class)
-    ->middleware('throttle:100,1')
-    ->group(function () {
-        Route::get('/', 'index');
-    });
+    // Route '/' pour voir toutes les news des parties + filtrage
+    // CRUD
+    Route::prefix('/news')
+        ->controller(NewsController::class)
+        ->group(function () {
+            Route::get('/', 'index');
+            Route::get('/{news}', 'show');
+            Route::post('/', 'store');
+            Route::put('/{news}', 'update');
+            Route::delete('/{news}', 'destroy');
+        });
 
-// route '/show' pour observer les stats d'un joueur spécifique
-// route '/' pour voir tous les joueurs + filtrage sur nombre d'elo ou nom (TODO)
-Route::prefix('/players')
-    ->controller(PlayerController::class)
-    ->group(function () {
-        Route::get('/', 'index');
-        Route::get('/{player}', 'show');
-    });
+    // Route '/' pour observer les ranks + filtrage
+    // CRUD
+    Route::prefix('/ranks')
+        ->controller(RankController::class)
+        ->group(function () {
+            Route::get('/', 'index');
+            Route::get('/{rank}', 'show');
+            Route::post('/', 'store');
+            Route::put('/{rank}', 'update');
+            Route::delete('/{rank}', 'destroy');
+        });
 
-// route '/{games}/finish' pour stopper une partie
-Route::prefix('/games')
-    ->controller(GameController::class)
-    ->group(function () {
-        Route::get('/', 'index');
-        Route::get('/{game}', 'show');
-        Route::post('/{game}/finish', 'finish');
-    });
+    // Route '/show' pour observer les stats d'un joueur spécifique
+    // Route '/' pour voir tous les joueurs
+    // CRUD
+    Route::prefix('/players')
+        ->controller(PlayerController::class)
+        ->group(function () {
+            Route::get('/', 'index');
+            Route::get('/{player}', 'show');
+            Route::post('/', 'store');
+            Route::put('/{player}', 'update');
+            Route::delete('/{player}', 'destroy');
+        });
 
-// route '/store' pour créer un tournoi, les rounds et les parties se créent dans le TournamentService
-Route::prefix('/tournaments')
-    ->controller(TournamentController::class)
-    ->group(function () {
-        Route::get('/', 'index');
-        Route::post('/', 'store');
-    });
+    // Route '/{games}/finish' pour stopper une partie
+    // CRUD
+    Route::prefix('/games')
+        ->controller(GameController::class)
+        ->group(function () {
+            Route::get('/', 'index');
+            Route::get('/{game}', 'show');
+            Route::post('/', 'store');
+            Route::put('/{game}', 'update');
+            Route::delete('/{game}', 'destroy');
+            Route::post('/{game}/finish', 'finish');
+        });
 
-Route::prefix('/rounds')
-    ->controller(RoundController::class)
-    ->group(function () {
-        Route::get('/', 'index');
-    });
+    // Route '/store' pour créer un tournoi, les rounds et les parties se créent dans le TournamentService
+    // CRUD
+    Route::prefix('/tournaments')
+        ->controller(TournamentController::class)
+        ->group(function () {
+            Route::get('/', 'index');
+            Route::get('/{tournament}', 'show');
+            Route::post('/', 'store');
+            Route::put('/{tournament}', 'update');
+            Route::delete('/{tournament}', 'destroy');
+        });
+
+    // Route '/' pour observer les rounds
+    // CRUD
+    Route::prefix('/rounds')
+        ->controller(RoundController::class)
+        ->group(function () {
+            Route::get('/', 'index');
+            Route::get('/{round}', 'show');
+            Route::post('/', 'store');
+            Route::put('/{round}', 'update');
+            Route::delete('/{round}', 'destroy');
+        });
+});

@@ -36,6 +36,10 @@ class Game extends Model
         return $this->belongsTo(Player::class, 'winner_player_id');
     }
 
+    /**
+     * Calculate the chances of the white player to win the game
+     * @return void
+     */
     public function calculateOddsForWhite()
     {
         if ($this->whitePlayer !== null && $this->blackPlayer !== null) {
@@ -46,6 +50,10 @@ class Game extends Model
         }
     }
 
+    /**
+     * Returns the winner of the game
+     * @return void
+     */
     public function designateWinner()
     {
         $winner = collect([$this->whitePlayer, $this->blackPlayer])->random();
@@ -53,16 +61,21 @@ class Game extends Model
         $this->save();
     }
 
-    public function distributePointsToPlayers()
+    /**
+     * Updates the points of the winner player with the response of the method calculatePoints
+     * @param Tournament $tournament
+     * @return void
+     */
+    public function distributePointsToPlayers(Tournament $tournament)
     {
         $this->loadMissing(['round', 'whitePlayer.rank', 'blackPlayer.rank', 'winnerPlayer']);
 
         if ($this->whitePlayer->id == $this->winnerPlayer->id) {
             $this->whitePlayer->calculatePoints($this->round->points_multiplier, $this->white_player_odds);
-            $this->blackPlayer->update(['is_eliminated' => 1]);
+            $tournament->players()->updateExistingPivot($this->blackPlayer->id, ['is_eliminated' => true]);
         } elseif ($this->blackPlayer->id == $this->winnerPlayer->id) {
-            $this->blackPlayer->calculatePoints($this->round->points_multiplier, (100 -$this->white_player_odds));
-            $this->whitePlayer->update(['is_eliminated' => 1]);
+            $this->blackPlayer->calculatePoints($this->round->points_multiplier, (100 - $this->white_player_odds));
+            $tournament->players()->updateExistingPivot($this->whitePlayer->id, ['is_eliminated' => true]);
         }
     }
 }

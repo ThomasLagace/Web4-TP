@@ -16,7 +16,7 @@ class RoundController extends Controller
      */
     public function index() : RoundCollection
     {
-        $rounds = Round::with('tournament')->get();
+        $rounds = Round::with('tournament')->paginate(4);
         return new RoundCollection($rounds);
     }
 
@@ -25,6 +25,15 @@ class RoundController extends Controller
      */
     public function show(Round $round) : RoundResource
     {
+        return new RoundResource($round);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(RoundRequest $request) : RoundResource
+    {
+        $round = Round::create($request->validated());
         return new RoundResource($round);
     }
 
@@ -40,9 +49,9 @@ class RoundController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Round $round) : RoundResource
+    public function destroy(Round $round) : \Illuminate\Http\Response
     {
         $round->delete();
-        return new RoundResource($round);
+        return response()->noContent();
     }
 }

@@ -8,16 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Player extends Model
 {
     use HasFactory;
-    protected $fillable = ['username', 'affiliation', 'points', 'is_eliminated', 'tournament_id', 'rank_id'];
+    protected $fillable = ['username', 'affiliation', 'points', 'rank_id'];
 
     public function rank()
     {
         return $this->belongsTo(Rank::class);
-    }
-
-    public function tournament()
-    {
-        return $this->belongsTo(Tournament::class);
     }
 
     public function gamesAsWhite()
@@ -35,15 +30,36 @@ class Player extends Model
         return $this->hasMany(Game::class, 'winner_player_id');
     }
 
+    public function tournaments() {
+        return $this->belongsToMany(Tournament::class)
+            ->withPivot('is_eliminated')
+            ->withTimestamps();
+    }
+
+    /**
+     * Calculates the rank of the player by its amount of points
+     * @return void
+     */
     public function calculateRank()
     {
-        $rank = Rank::where('min_points', '<=', $this->points)->where('max_points', '>=', $this->points)->first();
-        if ($this) {
+        $rank = Rank::where('min_points', '<=', $this->points)
+            ->where(function ($query) {
+                $query->whereNull('max_points')
+                    ->orWhere('max_points', '>=', $this->points);
+            })->first();
+
+        if ($rank) {
             $this->rank_id = $rank->id;
             $this->save();
         }
     }
 
+    /**
+     * Calculate the points obtained by the winner player
+     * @param $multiplier
+     * @param $odds
+     * @return void
+     */
     public function calculatePoints($multiplier, $odds)
     {
         $this->update(['points' => $this->points + $multiplier * (100 - $odds) + 400]);

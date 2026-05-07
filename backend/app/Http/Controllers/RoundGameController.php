@@ -7,6 +7,9 @@ use App\Models\Round;
 
 class RoundGameController extends Controller
 {
+    /**
+     * Display every game of a tournament given round.
+     */
     public function showGamesById(Round $round) : GameCollection
     {
         $games = Game::where('round_id', $round->id)->get();

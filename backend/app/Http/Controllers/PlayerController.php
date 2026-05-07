@@ -14,13 +14,7 @@ class PlayerController extends Controller
      */
     public function index() : PlayerCollection
     {
-        $query = Player::query();
-
-        if (request() -> has('is_eliminated')) {
-            $query -> where('is_eliminated',filter_var(request()->get('is_eliminated'),FILTER_VALIDATE_BOOLEAN));
-        }
-
-        $players = $query->with('rank')->paginate(15);
+        $players = Player::with('rank')->paginate(15);
         return new PlayerCollection($players);
     }
 

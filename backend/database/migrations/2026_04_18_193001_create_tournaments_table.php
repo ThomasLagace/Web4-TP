@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->date('start_date');
             $table->date('end_date');
-            $table->enum('status', ['pending', 'started', 'finished'])
-                ->default('pending');
+            $table->enum('status', ['started', 'finished'])
+                ->default('started');
             $table->integer('prize');
             $table->timestamps();
         });
