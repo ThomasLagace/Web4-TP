@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import gamesClient from '../api/gamesClient'
+import gamesClient from '../../api/gamesClient'
 
 export default function GamePage() {
   const { id } = useParams()

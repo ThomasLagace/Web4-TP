@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import GameCard from '../components/GameCard'
-import gamesClient from '../api/gamesClient';
+import GameCard from '../../components/GameCard'
+import gamesClient from '../../api/gamesClient';
 
 export default function GamesPage() {
   const [isLoading, setIsLoading] = useState(true)
