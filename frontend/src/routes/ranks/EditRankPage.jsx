@@ -12,6 +12,7 @@ export default function EditRankPage() {
 
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     ranksClient.show(id)
@@ -22,6 +23,10 @@ export default function EditRankPage() {
         setMinPoints(rank.min_points)
         setMaxPoints(rank.max_points)
       })
+      .catch((err) => {
+        setError('Une erreur est survenue lors du chargement.')
+        console.error(err)
+      })
       .finally(() => {
         setIsLoading(false)
       })
@@ -29,67 +34,79 @@ export default function EditRankPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-
+    setError('')
     setIsSaving(true)
 
-    ranksClient.update(id, minPoints, maxPoints, name)
+    ranksClient.update(id, parseInt(minPoints || 0, 10), parseInt(maxPoints || 0, 10), name)
       .then(() => {
         navigate(`/ranks/${id}`)
+      })
+      .catch((err) => {
+        setError('Une erreur est survenue lors de la mise à jour du rang.')
+        console.error(err)
       })
       .finally(() => {
         setIsSaving(false)
       })
   }
 
-  if (isLoading) {
-    return <div className="container py-4">Chargement...</div>
-  }
-
   return (
     <div className="container py-4">
       <h1 className="mb-4">Modifier le rang</h1>
 
-      <form onSubmit={handleSubmit}>
-        <div className="card">
-          <div className="card-body">
+      {isLoading ? (
+        <p className="text-muted">Chargement...</p>
+      ) : error ? (
+        <div className="alert alert-danger" role="alert">{error}</div>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          <div className="card">
+            <div className="card-body">
 
-            <div className="mb-3">
-              <label className="form-label">Nom</label>
-              <input
-                type="text"
-                className="form-control"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+              {error && (
+                <div className="alert alert-danger mb-3" role="alert">
+                  {error}
+                </div>
+              )}
+
+              <div className="mb-3">
+                <label className="form-label">Nom</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Elo minimum</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={minPoints}
+                  onChange={(e) => setMinPoints(parseInt(e.target.value || 0, 10))}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Elo maximum</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={maxPoints}
+                  onChange={(e) => setMaxPoints(parseInt(e.target.value || 0, 10))}
+                />
+              </div>
+
+              <button type="submit" className="btn btn-primary" disabled={isSaving}>
+                {isSaving ? 'Enregistrement...' : 'Sauvegarder'}
+              </button>
+
             </div>
-
-            <div className="mb-3">
-              <label className="form-label">Elo minimum</label>
-              <input
-                type="number"
-                className="form-control"
-                value={minPoints}
-                onChange={(e) => setMinPoints(e.target.value)}
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">Elo maximum</label>
-              <input
-                type="number"
-                className="form-control"
-                value={maxPoints}
-                onChange={(e) => setMaxPoints(e.target.value)}
-              />
-            </div>
-
-            <button type="submit" className="btn btn-primary" disabled={isSaving}>
-              {isSaving ? 'Enregistrement...' : 'Sauvegarder'}
-            </button>
-
           </div>
-        </div>
-      </form>
+        </form>
+      )}
     </div>
   )
 }

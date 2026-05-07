@@ -8,17 +8,22 @@ export default function CreateRankPage() {
   const [name, setName] = useState('')
   const [minPoints, setMinPoints] = useState(0)
   const [maxPoints, setMaxPoints] = useState(0)
-
   const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState('')
 
   const handleSubmit = (e) => {
     e.preventDefault()
 
+    setError('')
     setIsSaving(true)
 
-    ranksClient.store(minPoints, maxPoints, name)
+    ranksClient.store(parseInt(minPoints || 0, 10), parseInt(maxPoints || 0, 10), name)
       .then(() => {
         navigate('/ranks')
+      })
+      .catch((err) => {
+        setError('Une erreur est survenue lors de la création du rang.')
+        console.error(err)
       })
       .finally(() => {
         setIsSaving(false)
@@ -32,6 +37,12 @@ export default function CreateRankPage() {
       <form onSubmit={handleSubmit}>
         <div className="card">
           <div className="card-body">
+
+            {error && (
+              <div className="alert alert-danger mb-3" role="alert">
+                {error}
+              </div>
+            )}
 
             <div className="mb-3">
               <label className="form-label">Nom</label>
@@ -49,7 +60,7 @@ export default function CreateRankPage() {
                 type="number"
                 className="form-control"
                 value={minPoints}
-                onChange={(e) => setMinPoints(e.target.value)}
+                onChange={(e) => setMinPoints(parseInt(e.target.value || 0, 10))}
               />
             </div>
 
@@ -59,7 +70,7 @@ export default function CreateRankPage() {
                 type="number"
                 className="form-control"
                 value={maxPoints}
-                onChange={(e) => setMaxPoints(e.target.value)}
+                onChange={(e) => setMaxPoints(parseInt(e.target.value || 0, 10))}
               />
             </div>
 
