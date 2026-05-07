@@ -47,11 +47,11 @@ export default function GamesPage() {
           {gamesList.map((game) => (
             <div className="col" key={game.gameId}>
               <GameCard
-                gameId={game.gameId}
+                gameId={game.id}
                 status={game.status}
-                startTime={game.startTime}
-                whitePlayerName={game.whitePlayerName}
-                blackPlayerName={game.blackPlayerName}
+                startTime={game.start_time}
+                whitePlayerName={game.white_player?.username ?? "À determiner"}
+                blackPlayerName={game.black_player?.username ?? "À determiner"}
               />
             </div>
           ))}

@@ -52,7 +52,7 @@ export default function GamePage() {
           </div>
 
           <h1 className="mb-4">
-            {game.whitePlayerName} contre {game.blackPlayerName}
+            {game.white_player?.username ?? "À determiner"} contre {game.black_player?.username ?? "À determiner"}
           </h1>
 
           <div className="row g-4">
@@ -68,11 +68,9 @@ export default function GamePage() {
                     <li className="mb-2">
                       <span className="text-muted">Début :</span> {game.startTime}
                     </li>
-                    {game.roundId && (
-                      <li className="mb-2">
-                        <span className="text-muted">Ronde :</span> #{game.roundId}
-                      </li>
-                    )}
+                    <li className="mb-2">
+                      <span className="text-muted">Ronde :</span> #{game.round_id}
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -86,33 +84,27 @@ export default function GamePage() {
                     <div className="text-center flex-fill">
                       <div className="fw-bold">{game.whitePlayerName}</div>
                       <small className="text-muted">Blancs</small>
-                      {game.whitePlayerOdds != null && (
-                        <div className="mt-1">
-                          <span className="badge bg-light text-dark border">
-                            {game.whitePlayerOdds}%
-                          </span>
-                        </div>
-                      )}
+                      <div className="mt-1">
+                        <span className="badge bg-light text-dark border">
+                          {game.white_player_odds}%
+                        </span>
+                      </div>
                     </div>
                     <div className="text-muted px-3 fs-5">vs</div>
                     <div className="text-center flex-fill">
                       <div className="fw-bold">{game.blackPlayerName}</div>
                       <small className="text-muted">Noirs</small>
-                      {game.whitePlayerOdds != null && (
-                        <div className="mt-1">
-                          <span className="badge bg-dark text-light">
-                            {100 - game.whitePlayerOdds}%
-                          </span>
-                        </div>
-                      )}
+                      <div className="mt-1">
+                        <span className="badge bg-dark text-light">
+                          {100 - game.white_player_odds}%
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  {game.winnerPlayerName && (
-                    <div className="alert alert-success mb-0 text-center">
-                      Vainqueur : <strong>{game.winnerPlayerName}</strong>
-                    </div>
-                  )}
+                  <div className="alert alert-success mb-0 text-center">
+                    Vainqueur : <strong>{game.winner_player?.username ?? "À determiner"}</strong>
+                  </div>
                 </div>
               </div>
             </div>

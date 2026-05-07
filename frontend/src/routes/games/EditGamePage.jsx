@@ -5,6 +5,8 @@ import gamesClient from '../../api/gamesClient'
 import roundsClient from '../../api/roundsClient'
 import playersClient from '../../api/playersClient'
 
+const STATUSES = ['pending', 'started', 'finished']
+
 export default function EditGamePage() {
   const { id } = useParams()
 
@@ -121,12 +123,17 @@ export default function EditGamePage() {
             <div className="mb-3">
               <label className="form-label">Statut</label>
 
-              <input
-                type="text"
-                className="form-control"
+              <select
+                className="form-select"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-              />
+              >
+                {STATUSES.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="mb-3">
