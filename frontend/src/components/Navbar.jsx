@@ -17,7 +17,7 @@ export default function Navbar() {
             <Link className="nav-link" to="/games">Parties</Link>
           </li>
           <li className="nav-item active">
-            <Link className="nav-link" to="/news">Actualité</Link>
+            <Link className="nav-link" to="/news">Actualités</Link>
           </li>
         </ul>
       </div>
