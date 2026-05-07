@@ -87,6 +87,7 @@ export default function RoundPage() {
               {games.map((game) => (
                 <div className="col" key={game.gameId}>
                   <GameCard
+                    key={game.id}
                     gameId={game.id}
                     status={game.status}
                     startTime={game.start_time}

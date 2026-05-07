@@ -10,7 +10,6 @@ export default function EditRoundPage() {
   const navigate = useNavigate()
 
   const [name, setName] = useState('')
-  const [status, setStatus] = useState('')
   const [pointsMultiplier, setPointsMultiplier] = useState(1)
   const [tournamentId, setTournamentId] = useState('')
 
@@ -29,7 +28,6 @@ export default function EditRoundPage() {
         const round = roundRes.data.data
 
         setName(round.name)
-        setStatus(round.status)
         setPointsMultiplier(round.points_multiplier)
         setTournamentId(round.tournament_id)
 
@@ -53,7 +51,6 @@ export default function EditRoundPage() {
     roundsClient.update(
       id,
       name,
-      status,
       parseFloat(pointsMultiplier || 1),
       tournamentId
     )
@@ -71,7 +68,7 @@ export default function EditRoundPage() {
 
   return (
     <div className="container py-4">
-      <h1 className="mb-4">Modifier le round</h1>
+      <h1 className="mb-4">Modifier la ronde</h1>
 
       {isLoading ? (
         <p className="text-muted">Chargement...</p>
@@ -100,23 +97,13 @@ export default function EditRoundPage() {
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Statut</label>
-
-                <input
-                  type="text"
-                  className="form-control"
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                />
-              </div>
-
-              <div className="mb-3">
                 <label className="form-label">Multiplicateur de points</label>
 
                 <input
                   type="number"
                   className="form-control"
                   min={1}
+                  max={5}
                   value={pointsMultiplier}
                   onChange={(e) => setPointsMultiplier(parseInt(e.target.value || 1))}
                 />

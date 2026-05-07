@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import roundsClient from '../../api/roundsClient'
 import tournamentsClient from '../../api/tournamentsClient'
 
+const STATUSES = ['pending', 'started', 'finished']
+
 export default function CreateRoundPage() {
   const navigate = useNavigate()
 
@@ -89,12 +91,17 @@ export default function CreateRoundPage() {
               <div className="mb-3">
                 <label className="form-label">Statut</label>
 
-                <input
-                  type="text"
-                  className="form-control"
+                <select
+                  className="form-select"
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
-                />
+                >
+                  {STATUSES.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="mb-3">
