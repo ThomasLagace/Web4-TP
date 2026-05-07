@@ -67,10 +67,10 @@ export default function TournamentPage() {
                       <span className="badge bg-secondary">{tournament.status}</span>
                     </li>
                     <li className="mb-2">
-                      <span className="text-muted">Début :</span> {tournament.startDate}
+                      <span className="text-muted">Début :</span> {tournament.start_date}
                     </li>
                     <li className="mb-2">
-                      <span className="text-muted">Fin :</span> {tournament.endDate}
+                      <span className="text-muted">Fin :</span> {tournament.end_date}
                     </li>
                     <li className="mb-2">
                       <span className="text-muted">Prix :</span>{' '}

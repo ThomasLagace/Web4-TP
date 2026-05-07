@@ -51,8 +51,8 @@ export default function TournamentsPage() {
                 tournamentId={tournament.id}
                 name={tournament.name}
                 status={tournament.status}
-                startDate={tournament.startDate}
-                endDate={tournament.endDate}
+                startDate={tournament.start_date}
+                endDate={tournament.end_date}
                 prize={tournament.prize}
               />
             </div>
