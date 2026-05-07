@@ -12,7 +12,6 @@ export default function EditPlayerPage() {
   const [points, setPoints] = useState(0)
   const [rankId, setRankId] = useState('')
 
-  const [ranks, setRanks] = useState(['Chargement...'])
   const [ranks, setRanks] = useState([])
 
   const [isLoading, setIsLoading] = useState(true)
