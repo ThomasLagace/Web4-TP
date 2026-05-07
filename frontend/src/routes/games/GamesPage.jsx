@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
 import GameCard from '../../components/GameCard'
-import gamesClient from '../../api/gamesClient';
+import gamesClient from '../../api/gamesClient'
 
 export default function GamesPage() {
   const [isLoading, setIsLoading] = useState(true)
@@ -10,8 +9,9 @@ export default function GamesPage() {
   useEffect(() => {
     gamesClient.all().then((res) => {
       setGamesList(res.data["data"])
+    }).finally(() => {
       setIsLoading(false)
-    });
+    })
   }, [])
 
   return (
@@ -19,12 +19,11 @@ export default function GamesPage() {
       <h1 className="mb-4">Parties</h1>
       {isLoading ? (
         <p className="text-muted">Chargement...</p>
-      ) :
-      gamesList.length === 0 ? (
+      ) : gamesList.length === 0 ? (
         <p className="text-muted">Aucune partie trouvée.</p>
       ) : (
         <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-          {filteredGames.map((game) => (
+          {gamesList.map((game) => (
             <div className="col" key={game.gameId}>
               <GameCard
                 gameId={game.gameId}
