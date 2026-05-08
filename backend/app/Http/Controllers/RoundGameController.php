@@ -12,7 +12,7 @@ class RoundGameController extends Controller
      */
     public function showGamesById(Round $round) : GameCollection
     {
-        $games = Game::where('round_id', $round->id)->get();
+        $games = Game::where('round_id', $round->id)->with(['whitePlayer', 'blackPlayer', 'winnerPlayer'])->get();
         return new GameCollection($games);
     }
 }
