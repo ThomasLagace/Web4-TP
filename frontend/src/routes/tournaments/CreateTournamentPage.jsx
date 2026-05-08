@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Pagination from '../../components/Pagination'
 
 import tournamentsClient from '../../api/tournamentsClient'
 import playersClient from '../../api/playersClient'
@@ -13,15 +14,22 @@ export default function CreateTournamentPage() {
   const [playerIds, setPlayerIds] = useState([])
   const [players, setPlayers] = useState([])
   const [isPlayerPickerOpen, setIsPlayerPickerOpen] = useState(false)
+  const [playersPage, setPlayersPage] = useState(1)
+  const [playersPaginationMeta, setPlayersPaginationMeta] = useState({ perPage: 0, total: 0 })
 
   const [isSaving, setIsSaving] = useState(false)
   const [isLoadingPlayers, setIsLoadingPlayers] = useState(true)
   const [error, setError] = useState('')
 
   useEffect(() => {
-    playersClient.all()
+    setIsLoadingPlayers(true)
+    playersClient.all({ page: playersPage })
       .then((res) => {
         setPlayers(res.data.data ?? [])
+        setPlayersPaginationMeta({
+          perPage: res.data.meta?.per_page ?? 0,
+          total: res.data.meta?.total ?? 0,
+        })
       })
       .catch((err) => {
         setError('Une erreur est survenue lors du chargement des joueurs.')
@@ -30,7 +38,7 @@ export default function CreateTournamentPage() {
       .finally(() => {
         setIsLoadingPlayers(false)
       })
-  }, [])
+  }, [playersPage])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -150,23 +158,36 @@ export default function CreateTournamentPage() {
                     ) : availablePlayers.length === 0 ? (
                       <p className="text-muted mb-0">Tous les joueurs ont déjà été ajoutés.</p>
                     ) : (
-                      <div className="list-group">
-                        {availablePlayers.map((player) => (
-                          <div
-                            key={player.id}
-                            className="list-group-item d-flex justify-content-between align-items-center"
-                          >
-                            <span>{player.username}</span>
-                            <button
-                              type="button"
-                              className="btn btn-sm btn-success"
-                              onClick={() => handleAddPlayer(player.id)}
+                      <>
+                        <div className="list-group">
+                          {availablePlayers.map((player) => (
+                            <div
+                              key={player.id}
+                              className="list-group-item d-flex justify-content-between align-items-center"
                             >
-                              Ajouter
-                            </button>
+                              <span>{player.username}</span>
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-success"
+                                onClick={() => handleAddPlayer(player.id)}
+                              >
+                                Ajouter
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+
+                        {playersPaginationMeta.perPage > 0 && playersPaginationMeta.total > playersPaginationMeta.perPage ? (
+                          <div className="mt-3">
+                            <Pagination
+                              currentPage={playersPage}
+                              totalPages={Math.ceil(playersPaginationMeta.total / playersPaginationMeta.perPage)}
+                              onPageChange={(p) => setPlayersPage(p)}
+                              isDisabled={isLoadingPlayers}
+                            />
                           </div>
-                        ))}
-                      </div>
+                        ) : null}
+                      </>
                     )}
                   </div>
                 </div>
