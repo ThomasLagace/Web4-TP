@@ -1,7 +1,7 @@
 import apiClient from './apiClient'
 
 const tournamentsClient = {
-  all: () => apiClient.get('/tournaments'),
+  all: (params = {}) => apiClient.get('/tournaments', { params }),
   show: (id) => apiClient.get(`/tournaments/${id}`),
   store: (name, start_date, end_date, prize) =>
     apiClient.post('/tournaments', { name, start_date, end_date, prize }),

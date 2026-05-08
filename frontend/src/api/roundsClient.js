@@ -1,7 +1,7 @@
 import apiClient from './apiClient'
 
 const roundsClient = {
-  all: () => apiClient.get('/rounds'),
+  all: (params = {}) => apiClient.get('/rounds', { params }),
   show: (id) => apiClient.get(`/rounds/${id}`),
   store: (name, status, points_multiplier, tournament_id) =>
     apiClient.post('/rounds', { name, status, points_multiplier, tournament_id }),

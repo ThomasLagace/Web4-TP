@@ -1,7 +1,7 @@
 import apiClient from './apiClient'
 
 const playersClient = {
-  all: () => apiClient.get('/players'),
+  all: (params = {}) => apiClient.get('/players', { params }),
   show: (id) => apiClient.get(`/players/${id}`),
   store: (username, affiliation, points, rank_id) =>
     apiClient.post('/players', { username, affiliation, points, rank_id }),
