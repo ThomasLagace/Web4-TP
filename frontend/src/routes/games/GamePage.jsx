@@ -9,6 +9,23 @@ export default function GamePage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
+  const handleFinish = () => {
+    if (!confirm("Confirmer la fin de la partie ?")) return
+
+    setIsLoading(true)
+    setError('')
+    gamesClient.finish(id)
+      .then(() => {
+        window.location.reload()
+      })
+      .catch((err) => {
+        setError('Une erreur est survenue lors de la finalisation.')
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
+  }
+
   useEffect(() => {
     gamesClient.show(id)
       .then((res) => {
@@ -48,6 +65,13 @@ export default function GamePage() {
               onClick={() => navigate(`/games/${id}/edit`)}
             >
               Modifier
+            </button>
+            <button
+              className="btn btn-success"
+              onClick={handleFinish}
+              disabled={isLoading}
+            >
+              Terminer la partie
             </button>
           </div>
 
