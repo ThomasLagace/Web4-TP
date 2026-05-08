@@ -23,8 +23,8 @@ class RankRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'min_points' => 'integer',
-            'max_points' => 'integer',
+            'min_points' => 'integer|min:0',
+            'max_points' => 'integer|min:0|gt:min_points',
             'name' => 'required|min:3|max:20',
         ];
     }
