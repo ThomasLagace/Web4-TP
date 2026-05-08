@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import playersClient from '../../api/playersClient'
-import ranksClient from '../../api/ranksClient'
 
 export default function EditPlayerPage() {
   const { id } = useParams()
@@ -10,9 +9,6 @@ export default function EditPlayerPage() {
   const [username, setUsername] = useState('')
   const [affiliation, setAffiliation] = useState('')
   const [points, setPoints] = useState(0)
-  const [rankId, setRankId] = useState('')
-
-  const [ranks, setRanks] = useState([])
 
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -21,17 +17,13 @@ export default function EditPlayerPage() {
   useEffect(() => {
     Promise.all([
       playersClient.show(id),
-      ranksClient.all()
     ])
-      .then(([playerRes, ranksRes]) => {
+      .then(([playerRes]) => {
         const player = playerRes.data.data
 
         setUsername(player.username)
         setAffiliation(player.affiliation)
         setPoints(player.points)
-        setRankId(player.rank_id)
-
-        setRanks(ranksRes.data.data)
       })
       .catch((err) => {
         setError('Une erreur est survenue lors du chargement.')
@@ -47,7 +39,7 @@ export default function EditPlayerPage() {
 
     setIsSaving(true)
 
-    playersClient.update(id, username, affiliation, points, rankId)
+    playersClient.update(id, username, affiliation, points)
       .then(() => {
         navigate(`/players/${id}`)
       })
@@ -104,21 +96,6 @@ export default function EditPlayerPage() {
                   value={points}
                   onChange={(e) => setPoints(parseInt(e.target.value || 0, 10))}
                 />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Rang</label>
-                <select
-                  className="form-select"
-                  value={rankId}
-                  onChange={(e) => setRankId(e.target.value)}
-                >
-                  {ranks.map((rank) => (
-                    <option key={rank.id} value={rank.id}>
-                      {rank.name}
-                    </option>
-                  ))}
-                </select>
               </div>
 
               <button type="submit" className="btn btn-primary" disabled={isSaving}>
