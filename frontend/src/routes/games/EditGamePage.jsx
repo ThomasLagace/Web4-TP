@@ -5,20 +5,12 @@ import gamesClient from '../../api/gamesClient'
 import roundsClient from '../../api/roundsClient'
 import playersClient from '../../api/playersClient'
 
-const STATUSES = ['pending', 'started', 'finished']
-
 export default function EditGamePage() {
   const { id } = useParams()
 
   const navigate = useNavigate()
 
   const [startTime, setStartTime] = useState('')
-  const [status, setStatus] = useState('')
-  const [roundId, setRoundId] = useState('')
-  const [whitePlayerId, setWhitePlayerId] = useState('')
-  const [blackPlayerId, setBlackPlayerId] = useState('')
-  const [winnerPlayerId, setWinnerPlayerId] = useState('')
-
   const [rounds, setRounds] = useState([])
   const [players, setPlayers] = useState([])
 
@@ -36,11 +28,6 @@ export default function EditGamePage() {
         const game = gameRes.data.data
 
         setStartTime(game.start_time)
-        setStatus(game.status)
-        setRoundId(game.round_id)
-        setWhitePlayerId(game.white_player_id)
-        setBlackPlayerId(game.black_player_id)
-        setWinnerPlayerId(game.winner_player_id || '')
 
         setRounds(roundsRes.data.data)
         setPlayers(playersRes.data.data)
@@ -119,97 +106,6 @@ export default function EditGamePage() {
                 onChange={(e) => setStartTime(e.target.value)}
               />
             </div>
-
-            <div className="mb-3">
-              <label className="form-label">Statut</label>
-
-              <select
-                className="form-select"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-              >
-                {STATUSES.map((status) => (
-                  <option key={status} value={status}>
-                    {status}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">Round</label>
-
-              <select
-                className="form-select"
-                value={roundId}
-                onChange={(e) => setRoundId(e.target.value)}
-              >
-                {rounds.map((round) => (
-                  <option key={round.id} value={round.id}>
-                    {round.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">Joueur blanc</label>
-
-              <select
-                className="form-select"
-                value={whitePlayerId}
-                onChange={(e) => setWhitePlayerId(e.target.value)}
-              >
-                {players.map((player) => (
-                  <option key={player.id} value={player.id}>
-                    {player.username}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">Joueur noir</label>
-
-              <select
-                className="form-select"
-                value={blackPlayerId}
-                onChange={(e) => setBlackPlayerId(e.target.value)}
-              >
-                {players.map((player) => (
-                  <option key={player.id} value={player.id}>
-                    {player.username}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">Gagnant</label>
-
-              <select
-                className="form-select"
-                value={winnerPlayerId}
-                onChange={(e) => setWinnerPlayerId(e.target.value)}
-              >
-                <option value="">Aucun gagnant</option>
-
-                {players.map((player) => (
-                  <option key={player.id} value={player.id}>
-                    {player.username}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={isSaving}
-            >
-              {isSaving ? 'Enregistrement...' : 'Sauvegarder'}
-            </button>
-
           </div>
         </div>
       </form>

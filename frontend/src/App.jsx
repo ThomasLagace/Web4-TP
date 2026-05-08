@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import CreateGamePage from './routes/games/CreateGamePage'
 import EditGamePage from './routes/games/EditGamePage'
 import GamePage from './routes/games/GamePage'
 import GamesPage from './routes/games/GamesPage'
@@ -34,7 +33,6 @@ function App() {
         <Route path='/' element={<HomePage />} />
 
         <Route path='/games' element={<GamesPage />} />
-        <Route path='/games/create' element={<CreateGamePage />} />
         <Route path='/games/:id' element={<GamePage />} />
         <Route path='/games/:id/edit' element={<EditGamePage />} />
 

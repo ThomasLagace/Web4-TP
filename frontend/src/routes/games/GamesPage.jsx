@@ -51,12 +51,6 @@ export default function GamesPage() {
     <div className="container py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1>Parties</h1>
-        <button
-          className="btn btn-success"
-          onClick={() => navigate('/games/create')}
-        >
-          + Nouvelle partie
-        </button>
       </div>
       {isLoading ? (
         <p className="text-muted">Chargement...</p>
