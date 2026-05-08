@@ -22,7 +22,7 @@ export default function PlayersPage() {
 
     playersClient.all(Object.fromEntries(searchParams.entries()))
       .then((res) => {
-        setPlayersList(res.data.data ?? [])
+        setPlayersList(res.data['data'])
         setPaginationMeta({
           perPage: res.data.meta?.per_page ?? 0,
           total: res.data.meta?.total ?? 0,
