@@ -106,6 +106,15 @@ export default function EditGamePage() {
                 onChange={(e) => setStartTime(e.target.value)}
               />
             </div>
+
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={isSaving}
+            >
+              {isSaving ? 'Enregistrement...' : 'Sauvegarder'}
+            </button>
+
           </div>
         </div>
       </form>
