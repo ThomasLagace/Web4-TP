@@ -8,7 +8,6 @@ export default function CreatePlayerPage() {
   const [username, setUsername] = useState('')
   const [affiliation, setAffiliation] = useState('')
   const [points, setPoints] = useState(0)
-  const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
 
@@ -35,9 +34,7 @@ export default function CreatePlayerPage() {
     <div className="container py-4">
       <h1 className="mb-4">Nouveau joueur</h1>
 
-      {isLoading ? (
-        <p className="text-muted">Chargement...</p>
-      ) : error ? (
+      {error ? (
         <div className="alert alert-danger" role="alert">{error}</div>
       ) : (
         <form onSubmit={handleSubmit}>
