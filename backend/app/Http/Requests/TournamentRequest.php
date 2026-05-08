@@ -25,7 +25,7 @@ class TournamentRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:50'],
             'start_date' => ['required', 'date'],
-            'prize' => ['required', 'integer'],
+            'prize' => ['required', 'integer', 'min:0'],
             'winner_id' => ['integer', 'exists:players,id'],
         ];
     }
