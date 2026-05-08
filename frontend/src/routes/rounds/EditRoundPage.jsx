@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import roundsClient from '../../api/roundsClient'
-import tournamentsClient from '../../api/tournamentsClient'
 
 export default function EditRoundPage() {
   const { id } = useParams()
@@ -11,9 +10,6 @@ export default function EditRoundPage() {
 
   const [name, setName] = useState('')
   const [pointsMultiplier, setPointsMultiplier] = useState(1)
-  const [tournamentId, setTournamentId] = useState('')
-
-  const [tournaments, setTournaments] = useState([])
 
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -22,16 +18,12 @@ export default function EditRoundPage() {
   useEffect(() => {
     Promise.all([
       roundsClient.show(id),
-      tournamentsClient.all(),
     ])
-      .then(([roundRes, tournamentsRes]) => {
+      .then(([roundRes]) => {
         const round = roundRes.data.data
 
         setName(round.name)
         setPointsMultiplier(round.points_multiplier)
-        setTournamentId(round.tournament_id)
-
-        setTournaments(tournamentsRes.data.data)
       })
       .catch((err) => {
         setError('Une erreur est survenue lors du chargement.')
@@ -51,8 +43,7 @@ export default function EditRoundPage() {
     roundsClient.update(
       id,
       name,
-      parseFloat(pointsMultiplier || 1),
-      tournamentId
+      parseInt(pointsMultiplier || 1),
     )
       .then(() => {
         navigate(`/rounds/${id}`)
@@ -107,25 +98,6 @@ export default function EditRoundPage() {
                   value={pointsMultiplier}
                   onChange={(e) => setPointsMultiplier(parseInt(e.target.value || 1))}
                 />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Tournoi</label>
-
-                <select
-                  className="form-select"
-                  value={tournamentId}
-                  onChange={(e) => setTournamentId(e.target.value)}
-                >
-                  {tournaments.map((tournament) => (
-                    <option
-                      key={tournament.id}
-                      value={tournament.id}
-                    >
-                      {tournament.name}
-                    </option>
-                  ))}
-                </select>
               </div>
 
               <button
