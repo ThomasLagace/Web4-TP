@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import playersClient from '../../api/playersClient'
-import ranksClient from '../../api/ranksClient'
 
 export default function CreatePlayerPage() {
   const navigate = useNavigate()
@@ -9,25 +8,9 @@ export default function CreatePlayerPage() {
   const [username, setUsername] = useState('')
   const [affiliation, setAffiliation] = useState('')
   const [points, setPoints] = useState(0)
-  const [rankId, setRankId] = useState('')
-  const [ranks, setRanks] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
-
-  useEffect(() => {
-    ranksClient.all()
-      .then((res) => {
-        setRanks(res.data.data)
-      })
-      .catch((err) => {
-        setError('Une erreur est survenue lors du chargement des rangs.')
-        console.error(err)
-      })
-      .finally(() => {
-        setIsLoading(false)
-      })
-  }, [])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -35,7 +18,7 @@ export default function CreatePlayerPage() {
     setError('')
     setIsSaving(true)
 
-    playersClient.store(username, affiliation, points, rankId)
+    playersClient.store(username, affiliation, points)
       .then(() => {
         navigate('/players')
       })
@@ -95,23 +78,6 @@ export default function CreatePlayerPage() {
                   value={points}
                   onChange={(e) => setPoints(parseInt(e.target.value || 0, 10))}
                 />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Rang</label>
-                <select
-                  className="form-select"
-                  value={rankId}
-                  onChange={(e) => setRankId(e.target.value)}
-                >
-                  <option value="">Choisir un rang</option>
-
-                  {ranks.map((rank) => (
-                    <option key={rank.id} value={rank.id}>
-                      {rank.name}
-                    </option>
-                  ))}
-                </select>
               </div>
 
               <button type="submit" className="btn btn-primary" disabled={isSaving}>
