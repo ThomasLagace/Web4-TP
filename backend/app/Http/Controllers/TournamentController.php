@@ -41,18 +41,18 @@ class TournamentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(TournamentRequest $request, Tournament $t) : TournamentResource
+    public function update(TournamentRequest $request, Tournament $tournament) : TournamentResource
     {
-        $t -> update($request->validated());
-        return new TournamentResource($t);
+        $tournament -> update($request->validated());
+        return new TournamentResource($tournament);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Tournament $t) : \Illuminate\Http\Response
+    public function destroy(Tournament $tournament) : \Illuminate\Http\Response
     {
-        $t->delete();
+        $tournament->delete();
         return response()->noContent();
     }
 }
