@@ -41,6 +41,13 @@ export default function GamesPage() {
     ? Math.ceil(paginationMeta.total / paginationMeta.perPage)
     : 0
 
+  const startEntry = paginationMeta.total === 0
+    ? 0
+    : ((currentPage - 1) * paginationMeta.perPage) + 1
+  const endEntry = paginationMeta.total === 0
+    ? 0
+    : Math.min(currentPage * paginationMeta.perPage, paginationMeta.total)
+
   const handlePageChange = (page) => {
     const nextParams = new URLSearchParams(searchParams)
     nextParams.set('page', String(page))
@@ -61,19 +68,26 @@ export default function GamesPage() {
       ) : gamesList.length === 0 ? (
         <p className="text-muted">Aucune partie trouvée.</p>
       ) : (
-        <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-          {gamesList.map((game) => (
-            <div className="col" key={game.gameId}>
-              <GameCard
-                gameId={game.id}
-                status={game.status}
-                startTime={game.start_time}
-                whitePlayerName={game.white_player?.username ?? "À determiner"}
-                blackPlayerName={game.black_player?.username ?? "À determiner"}
-              />
-            </div>
-          ))}
-        </div>
+        <>
+          <div className="d-flex justify-content-between align-items-center mb-3 text-muted">
+            <small>
+              Affichage de {startEntry} à {endEntry} sur {paginationMeta.total} entrées
+            </small>
+          </div>
+          <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+            {gamesList.map((game) => (
+              <div className="col" key={game.gameId}>
+                <GameCard
+                  gameId={game.id}
+                  status={game.status}
+                  startTime={game.start_time}
+                  whitePlayerName={game.white_player?.username ?? "À determiner"}
+                  blackPlayerName={game.black_player?.username ?? "À determiner"}
+                />
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {totalPages > 1 ? (
