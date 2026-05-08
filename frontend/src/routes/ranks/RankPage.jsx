@@ -88,7 +88,7 @@ export default function RankPage() {
                     </li>
                     <li className="mb-2">
                       <span className="text-muted">Elo maximum :</span>{' '}
-                      <strong>{rank.max_points}</strong>
+                      <strong>{rank.max_points || 'infinie'}</strong>
                     </li>
                   </ul>
                 </div>

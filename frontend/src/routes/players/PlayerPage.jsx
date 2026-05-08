@@ -89,7 +89,7 @@ export default function PlayerPage() {
                     </li>
                     <li className="mb-2">
                       <span className="text-muted">Rang :</span>{' '}
-                      <span className="badge bg-secondary">{player.rank?.name}</span>
+                      <span className="badge bg-secondary">{player.rank?.name || 'non classé'}</span>
                     </li>
                   </ul>
                 </div>
