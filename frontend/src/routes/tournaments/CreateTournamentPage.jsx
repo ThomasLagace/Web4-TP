@@ -5,6 +5,8 @@ import Pagination from '../../components/Pagination'
 import tournamentsClient from '../../api/tournamentsClient'
 import playersClient from '../../api/playersClient'
 
+const MAX_PLAYERS = 16
+
 export default function CreateTournamentPage() {
   const navigate = useNavigate()
 
@@ -13,6 +15,7 @@ export default function CreateTournamentPage() {
   const [prize, setPrize] = useState('')
   const [playerIds, setPlayerIds] = useState([])
   const [players, setPlayers] = useState([])
+  const [allPlayersList, setAllPlayersList] = useState([])
   const [isPlayerPickerOpen, setIsPlayerPickerOpen] = useState(false)
   const [playersPage, setPlayersPage] = useState(1)
   const [playersPaginationMeta, setPlayersPaginationMeta] = useState({ perPage: 0, total: 0 })
@@ -25,10 +28,15 @@ export default function CreateTournamentPage() {
     setIsLoadingPlayers(true)
     playersClient.all({ page: playersPage })
       .then((res) => {
-        setPlayers(res.data.data ?? [])
+        const fetchedPlayers = res.data.data ?? []
+        setPlayers(fetchedPlayers)
         setPlayersPaginationMeta({
           perPage: res.data.meta?.per_page ?? 0,
           total: res.data.meta?.total ?? 0,
+        })
+        setAllPlayersList((prev) => {
+          const existingIds = new Set(prev.map((p) => p.id))
+          return [...prev, ...fetchedPlayers.filter((p) => !existingIds.has(p.id))]
         })
       })
       .catch((err) => {
@@ -49,7 +57,7 @@ export default function CreateTournamentPage() {
     tournamentsClient.store(
       name,
       startDate,
-      parseFloat(prize || 0),
+      parseInt(prize || 0),
       playerIds
     )
       .then(() => {
@@ -64,11 +72,11 @@ export default function CreateTournamentPage() {
       })
   }
 
-  const selectedPlayers = players.filter((player) => playerIds.includes(player.id))
+  const selectedPlayers = allPlayersList.filter((player) => playerIds.includes(player.id))
   const availablePlayers = players.filter((player) => !playerIds.includes(player.id))
 
   const handleAddPlayer = (playerId) => {
-    if (!playerIds.includes(playerId)) {
+    if (!playerIds.includes(playerId) && playerIds.length < MAX_PLAYERS) {
       setPlayerIds([...playerIds, playerId])
     }
     setIsPlayerPickerOpen(false)
@@ -119,24 +127,30 @@ export default function CreateTournamentPage() {
 
               <input
                 type="number"
-                step="0.01"
+                step="1"
+                min={0}
                 className="form-control"
                 value={prize}
-                onChange={(e) => setPrize(parseFloat(e.target.value || 0))}
+                onChange={(e) => setPrize(parseInt(e.target.value || 0))}
               />
             </div>
 
             <div className="mb-3">
               <label className="form-label">Joueurs</label>
-              <div className="d-flex flex-wrap gap-2 mb-2">
-                <button
-                  type="button"
-                  className="btn btn-outline-primary"
-                  onClick={() => setIsPlayerPickerOpen((open) => !open)}
-                  disabled={isLoadingPlayers}
-                >
-                  + Ajouter un joueur
-                </button>
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <div>
+                  <button
+                    type="button"
+                    className="btn btn-outline-primary"
+                    onClick={() => setIsPlayerPickerOpen((open) => !open)}
+                    disabled={isLoadingPlayers || playerIds.length >= MAX_PLAYERS}
+                  >
+                    + Ajouter un joueur
+                  </button>
+                </div>
+                <small className="text-muted">
+                  {playerIds.length}/{MAX_PLAYERS} joueurs sélectionnés
+                </small>
               </div>
 
               {isPlayerPickerOpen ? (
@@ -155,27 +169,30 @@ export default function CreateTournamentPage() {
 
                     {isLoadingPlayers ? (
                       <p className="text-muted mb-0">Chargement des joueurs...</p>
-                    ) : availablePlayers.length === 0 ? (
-                      <p className="text-muted mb-0">Tous les joueurs ont déjà été ajoutés.</p>
                     ) : (
                       <>
-                        <div className="list-group">
-                          {availablePlayers.map((player) => (
-                            <div
-                              key={player.id}
-                              className="list-group-item d-flex justify-content-between align-items-center"
-                            >
-                              <span>{player.username}</span>
-                              <button
-                                type="button"
-                                className="btn btn-sm btn-success"
-                                onClick={() => handleAddPlayer(player.id)}
+                        {availablePlayers.length === 0 ? (
+                          <p className="text-muted mb-3">Tous les joueurs disponibles sur cette page ont déjà été ajoutés.</p>
+                        ) : (
+                          <div className="list-group mb-3">
+                            {availablePlayers.map((player) => (
+                              <div
+                                key={player.id}
+                                className="list-group-item d-flex justify-content-between align-items-center"
                               >
-                                Ajouter
-                              </button>
-                            </div>
-                          ))}
-                        </div>
+                                <span>{player.username}</span>
+                                <button
+                                  type="button"
+                                  className="btn btn-sm btn-success"
+                                  onClick={() => handleAddPlayer(player.id)}
+                                  disabled={playerIds.length >= MAX_PLAYERS}
+                                >
+                                  Ajouter
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
 
                         {playersPaginationMeta.perPage > 0 && playersPaginationMeta.total > playersPaginationMeta.perPage ? (
                           <div className="mt-3">
