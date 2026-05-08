@@ -35,6 +35,7 @@ class TournamentController extends Controller
      */
     public function show(Tournament $tournament) : TournamentResource
     {
+        $tournament->load(['winner']);
         return new TournamentResource($tournament);
     }
 
