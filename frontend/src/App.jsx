@@ -16,7 +16,6 @@ import CreateRankPage from './routes/ranks/CreateRankPage'
 import EditRankPage from './routes/ranks/EditRankPage'
 import RankPage from './routes/ranks/RankPage'
 import RanksPage from './routes/ranks/RanksPage'
-import CreateRoundPage from './routes/rounds/CreateRoundPage'
 import EditRoundPage from './routes/rounds/EditRoundPage'
 import RoundPage from './routes/rounds/RoundPage'
 import RoundsPage from './routes/rounds/RoundsPage'
@@ -52,7 +51,6 @@ function App() {
         <Route path='/ranks/:id/edit' element={<EditRankPage />} />
 
         <Route path='/rounds' element={<RoundsPage />} />
-        <Route path='/rounds/create' element={<CreateRoundPage />} />
         <Route path='/rounds/:id' element={<RoundPage />} />
         <Route path='/rounds/:id/edit' element={<EditRoundPage />} />
 
