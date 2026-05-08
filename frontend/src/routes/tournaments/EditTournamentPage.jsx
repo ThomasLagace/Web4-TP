@@ -10,7 +10,6 @@ export default function EditTournamentPage() {
 
   const [name, setName] = useState('')
   const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
   const [prize, setPrize] = useState('')
 
   const [isLoading, setIsLoading] = useState(true)
@@ -24,7 +23,6 @@ export default function EditTournamentPage() {
 
         setName(tournament.name)
         setStartDate(tournament.start_date)
-        setEndDate(tournament.end_date)
         setPrize(tournament.prize)
       })
       .catch((err) => {
@@ -46,7 +44,6 @@ export default function EditTournamentPage() {
       id,
       name,
       startDate,
-      endDate,
       parseFloat(prize || 0)
     )
       .then(() => {
@@ -99,17 +96,6 @@ export default function EditTournamentPage() {
                   className="form-control"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Date de fin</label>
-
-                <input
-                  type="date"
-                  className="form-control"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
                 />
               </div>
 

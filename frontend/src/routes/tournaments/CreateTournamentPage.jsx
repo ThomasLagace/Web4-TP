@@ -9,7 +9,6 @@ export default function CreateTournamentPage() {
 
   const [name, setName] = useState('')
   const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
   const [prize, setPrize] = useState('')
   const [playerIds, setPlayerIds] = useState([])
   const [players, setPlayers] = useState([])
@@ -42,7 +41,6 @@ export default function CreateTournamentPage() {
     tournamentsClient.store(
       name,
       startDate,
-      endDate,
       parseFloat(prize || 0),
       playerIds
     )
@@ -105,17 +103,6 @@ export default function CreateTournamentPage() {
                 className="form-control"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">Date de fin</label>
-
-              <input
-                type="date"
-                className="form-control"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
               />
             </div>
 
