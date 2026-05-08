@@ -76,38 +76,40 @@ export default function GamePage() {
               </div>
             </div>
 
-            <div className="col-md-6">
-              <div className="card h-100">
-                <div className="card-body">
-                  <h5 className="card-title">Joueurs</h5>
-                  <div className="d-flex justify-content-between align-items-center mb-3">
-                    <div className="text-center flex-fill">
-                      <div className="fw-bold">{game.whitePlayerName}</div>
-                      <small className="text-muted">Blancs</small>
-                      <div className="mt-1">
-                        <span className="badge bg-light text-dark border">
-                          {game.white_player_odds}%
-                        </span>
+            {game.white_player === null || game.black_player === null ? null : (
+              <div className="col-md-6">
+                <div className="card h-100">
+                  <div className="card-body">
+                    <h5 className="card-title">Joueurs</h5>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <div className="text-center flex-fill">
+                        <div className="fw-bold">{game.white_player.username}</div>
+                        <small className="text-muted">Blancs</small>
+                        <div className="mt-1">
+                          <span className="badge bg-light text-dark border">
+                            {game.white_player_odds}%
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-muted px-3 fs-5">vs</div>
+                      <div className="text-center flex-fill">
+                        <div className="fw-bold">{game.black_player.username}</div>
+                        <small className="text-muted">Noirs</small>
+                        <div className="mt-1">
+                          <span className="badge bg-dark text-light">
+                            {100 - game.white_player_odds}%
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <div className="text-muted px-3 fs-5">vs</div>
-                    <div className="text-center flex-fill">
-                      <div className="fw-bold">{game.blackPlayerName}</div>
-                      <small className="text-muted">Noirs</small>
-                      <div className="mt-1">
-                        <span className="badge bg-dark text-light">
-                          {100 - game.white_player_odds}%
-                        </span>
-                      </div>
-                    </div>
-                  </div>
 
-                  <div className="alert alert-success mb-0 text-center">
-                    Vainqueur : <strong>{game.winner_player?.username ?? "À determiner"}</strong>
+                    <div className="alert alert-success mb-0 text-center">
+                      Vainqueur : <strong>{game.winner_player?.username ?? "À determiner"}</strong>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </>
       )}
