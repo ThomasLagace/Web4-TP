@@ -65,9 +65,7 @@ export default function PlayerPage() {
             >
               Modifier
             </button>
-          </div>
 
-          <div className="mb-4 d-flex gap-2">
             <button
               className="btn btn-danger"
               onClick={handleDelete}

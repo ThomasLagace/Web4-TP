@@ -73,29 +73,24 @@ export default function GamePage() {
           >
             &larr; Retour aux parties
           </button>
-          {game.status !== 'pending' && game.status !== 'started' ? null : (
-            <div className="mb-4 d-flex gap-2">
-              {game.status !== 'pending' ? null : (
-                <button
-                  className="btn btn-warning"
-                  onClick={() => navigate(`/games/${id}/edit`)}
-                >
-                  Modifier
-                </button>
-              )}
-              {game.status !== 'started' ? null : (
-                <button
-                  className="btn btn-success"
-                  onClick={handleFinish}
-                  disabled={isLoading}
-                >
-                  Terminer la partie
-                </button>
-              )}
-            </div>
-          )}
-          
           <div className="mb-4 d-flex gap-2">
+            {game.status !== 'pending' ? null : (
+              <button
+                className="btn btn-warning"
+                onClick={() => navigate(`/games/${id}/edit`)}
+              >
+                Modifier
+              </button>
+            )}
+            {game.status !== 'started' ? null : (
+              <button
+                className="btn btn-success"
+                onClick={handleFinish}
+                disabled={isLoading}
+              >
+                Terminer la partie
+              </button>
+            )}
             <button
               className="btn btn-danger"
               onClick={handleDelete}
@@ -104,6 +99,7 @@ export default function GamePage() {
               Supprimer
             </button>
           </div>
+
           <h1 className="mb-4">
             {game.white_player?.username ?? "À determiner"} contre {game.black_player?.username ?? "À determiner"}
           </h1>
