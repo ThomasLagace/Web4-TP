@@ -43,7 +43,7 @@ export default function CreateRoundPage() {
     roundsClient.store(
       name,
       status,
-      parseFloat(pointsMultiplier || 1),
+      parseInt(pointsMultiplier || 1),
       tournamentId
     )
       .then(() => {
@@ -112,7 +112,7 @@ export default function CreateRoundPage() {
                   step="0.1"
                   className="form-control"
                   value={pointsMultiplier}
-                  onChange={(e) => setPointsMultiplier(parseFloat(e.target.value || 1))}
+                  onChange={(e) => setPointsMultiplier(parseInt(e.target.value || 1))}
                 />
               </div>
 
