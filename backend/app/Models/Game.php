@@ -68,7 +68,7 @@ class Game extends Model
      */
     public function distributePointsToPlayers(Tournament $tournament)
     {
-        $this->loadMissing(['round', 'whitePlayer.rank', 'blackPlayer.rank', 'winnerPlayer']);
+        $this->loadMissing(['round', 'whitePlayer', 'blackPlayer', 'winnerPlayer']);
 
         if ($this->whitePlayer->id == $this->winnerPlayer->id) {
             $this->whitePlayer->calculatePoints($this->round->points_multiplier, $this->white_player_odds);
