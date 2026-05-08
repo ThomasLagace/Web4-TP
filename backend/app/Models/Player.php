@@ -8,12 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Player extends Model
 {
     use HasFactory;
-    protected $fillable = ['username', 'affiliation', 'points', 'rank_id'];
-
-    public function rank()
-    {
-        return $this->belongsTo(Rank::class);
-    }
+    protected $fillable = ['username', 'affiliation', 'points'];
+    protected $appends = ['rank'];
 
     public function gamesAsWhite()
     {
@@ -40,18 +36,13 @@ class Player extends Model
      * Calculates the rank of the player by its amount of points
      * @return void
      */
-    public function calculateRank()
+    public function getRankAttribute()
     {
-        $rank = Rank::where('min_points', '<=', $this->points)
+        return Rank::where('min_points', '<=', $this->points)
             ->where(function ($query) {
                 $query->whereNull('max_points')
                     ->orWhere('max_points', '>=', $this->points);
             })->first();
-
-        if ($rank) {
-            $this->rank_id = $rank->id;
-            $this->save();
-        }
     }
 
     /**
@@ -63,6 +54,5 @@ class Player extends Model
     public function calculatePoints($multiplier, $odds)
     {
         $this->update(['points' => $this->points + $multiplier * (100 - $odds) + 400]);
-        $this->calculateRank();
     }
 }

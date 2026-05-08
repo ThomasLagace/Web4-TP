@@ -14,7 +14,7 @@ class PlayerController extends Controller
      */
     public function index() : PlayerCollection
     {
-        $players = Player::with('rank')->paginate(15);
+        $players = Player::paginate(15);
         return new PlayerCollection($players);
     }
 
@@ -24,8 +24,6 @@ class PlayerController extends Controller
     public function store(PlayerRequest $request) : PlayerResource
     {
         $player = Player::create($request->validated());
-        $player->calculateRank();
-        $player->load('rank');
         return new PlayerResource($player);
     }
 
@@ -34,7 +32,6 @@ class PlayerController extends Controller
      */
     public function show(Player $player) : PlayerResource
     {
-        $player->load('rank');
         return new PlayerResource($player);
     }
 
@@ -44,8 +41,6 @@ class PlayerController extends Controller
     public function update(PlayerRequest $request, Player $player) : PlayerResource
     {
         $player->update($request->validated());
-        $player->calculateRank();
-        $player->load('rank');
         return new PlayerResource($player);
     }
 

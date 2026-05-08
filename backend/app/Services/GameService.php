@@ -14,7 +14,7 @@ class GameService
     public function finishGame(Game $game): Game
     {
         if ($game->status !== 'finished') {
-            $game->load(['whitePlayer.rank', 'blackPlayer.rank', 'round.tournament']);
+            $game->load(['whitePlayer', 'blackPlayer', 'round.tournament']);
             $game->designateWinner();
             $game->load(['winnerPlayer']);
             $game->distributePointsToPlayers($game->round->tournament);
