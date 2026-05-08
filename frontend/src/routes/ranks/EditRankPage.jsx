@@ -83,6 +83,8 @@ export default function EditRankPage() {
                 <label className="form-label">Elo minimum</label>
                 <input
                   type="number"
+                  min={0}
+                  max={maxPoints}
                   className="form-control"
                   value={minPoints}
                   onChange={(e) => setMinPoints(parseInt(e.target.value || 0, 10))}
@@ -93,6 +95,7 @@ export default function EditRankPage() {
                 <label className="form-label">Elo maximum</label>
                 <input
                   type="number"
+                  min={minPoints}
                   className="form-control"
                   value={maxPoints}
                   onChange={(e) => setMaxPoints(parseInt(e.target.value || 0, 10))}
