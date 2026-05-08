@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tournament extends Model
 {
-    protected $fillable = ['name', 'status', 'start_date', 'end_date', 'prize', 'winner_id'];
+    protected $fillable = ['name', 'status', 'start_date', 'prize', 'winner_id'];
 
     public function rounds()
     {
