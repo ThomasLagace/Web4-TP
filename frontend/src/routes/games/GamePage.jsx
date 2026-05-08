@@ -66,13 +66,15 @@ export default function GamePage() {
             >
               Modifier
             </button>
-            <button
-              className="btn btn-success"
-              onClick={handleFinish}
-              disabled={isLoading}
-            >
-              Terminer la partie
-            </button>
+            {game.status === 'finish' ? null : (
+              <button
+                className="btn btn-success"
+                onClick={handleFinish}
+                disabled={isLoading}
+              >
+                Terminer la partie
+              </button>
+            )}
           </div>
 
           <h1 className="mb-4">
