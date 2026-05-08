@@ -50,14 +50,16 @@ export default function TournamentPage() {
 
           <h1 className="mb-4">{tournament.name}</h1>
 
-          <div className="mb-4 d-flex gap-2">
-            <button
-              className="btn btn-warning"
-              onClick={() => navigate(`/tournaments/${id}/edit`)}
-            >
-              Modifier
-            </button>
-          </div>
+          {tournament.status !== 'started' ? null : (
+            <div className="mb-4 d-flex gap-2">
+              <button
+                className="btn btn-warning"
+                onClick={() => navigate(`/tournaments/${id}/edit`)}
+              >
+                Modifier
+              </button>
+            </div>
+          )}
 
           <div className="row g-4 mb-5">
             <div className="col-md-6">
