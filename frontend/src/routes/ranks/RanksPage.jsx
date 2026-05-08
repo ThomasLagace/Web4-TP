@@ -14,7 +14,12 @@ export default function RanksPage() {
     total: 0,
   })
   const [error, setError] = useState('')
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('name') ?? '')
   const currentPage = Math.max(1, Number(searchParams.get('page') ?? 1) || 1)
+
+  useEffect(() => {
+    setSearchTerm(searchParams.get('name') ?? '')
+  }, [searchParams])
 
   useEffect(() => {
     setIsLoading(true)
@@ -47,6 +52,22 @@ export default function RanksPage() {
     setSearchParams(nextParams)
   }
 
+  const handleSearchSubmit = (event) => {
+    event.preventDefault()
+
+    const nextParams = new URLSearchParams(searchParams)
+    const trimmedSearchTerm = searchTerm.trim()
+
+    if (trimmedSearchTerm) {
+      nextParams.set('name', trimmedSearchTerm)
+    } else {
+      nextParams.delete('name')
+    }
+
+    nextParams.set('page', '1')
+    setSearchParams(nextParams)
+  }
+
   const startEntry = paginationMeta.total === 0
     ? 0
     : ((currentPage - 1) * paginationMeta.perPage) + 1
@@ -65,6 +86,18 @@ export default function RanksPage() {
           + Nouveau rang
         </button>
       </div>
+      <form className="mb-4 d-flex gap-2" onSubmit={handleSearchSubmit}>
+        <input
+          type="search"
+          className="form-control"
+          placeholder="Rechercher par nom"
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.target.value)}
+        />
+        <button type="submit" className="btn btn-outline-primary">
+          Rechercher
+        </button>
+      </form>
       {isLoading ? (
         <p className="text-muted">Chargement...</p>
       ) : error ? (
