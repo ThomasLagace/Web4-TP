@@ -22,7 +22,7 @@ export default function RanksPage() {
 
     ranksClient.all(Object.fromEntries(searchParams.entries()))
       .then((res) => {
-        setRanksList(res.data.data ?? [])
+        setRanksList(res.data['data'])
         setPaginationMeta({
           perPage: res.data.meta?.per_page ?? 0,
           total: res.data.meta?.total ?? 0,
