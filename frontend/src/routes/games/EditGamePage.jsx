@@ -50,11 +50,6 @@ export default function EditGamePage() {
     gamesClient.update(
       id,
       startTime,
-      status,
-      roundId,
-      whitePlayerId,
-      blackPlayerId,
-      winnerPlayerId
     )
       .then(() => {
         navigate(`/games/${id}`)
