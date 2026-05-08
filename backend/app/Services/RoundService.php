@@ -58,7 +58,7 @@ class RoundService
                     $twoPlayers = $this->pairingService->pairPlayers($players, $round, $game);
                     $players = $players->diff($twoPlayers);
                 } else {
-                    Game::create(['start_time' => now(), 'status' => 'pending', 'round_id' => $round->id]);
+                    Game::create(['status' => 'pending', 'round_id' => $round->id]);
                 }
             }
         }
@@ -86,6 +86,7 @@ class RoundService
 
             foreach ($gamesToUpdate as $gameToUpd) {
                 $twoPlayers = $this->pairingService->pairPlayers($playersLeft, $roundToStart, $gameToUpd);
+                $gameToUpd->update(['start_time' => now()]);
                 $playersLeft = $playersLeft->diff($twoPlayers);
             }
 

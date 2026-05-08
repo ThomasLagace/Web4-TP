@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('games', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('start_time');
+            $table->dateTime('start_time')
+                ->nullable();
             $table->enum('status', ['pending', 'started', 'finished'])
                 ->default('pending');
             $table->foreignId('round_id')

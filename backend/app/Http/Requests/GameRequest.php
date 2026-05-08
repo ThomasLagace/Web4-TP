@@ -25,7 +25,7 @@ class GameRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'start_time' => ['required', 'date'],
+            'start_time' => ['date'],
             'status' => [Rule::in('pending', 'started', 'finished')],
             'round_id' => ['required', 'integer', 'exists:rounds,id'],
             'white_player_id' => ['nullable', 'integer', 'exists:players,id'],
