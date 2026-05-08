@@ -66,7 +66,7 @@ export default function GamePage() {
             >
               Modifier
             </button>
-            {game.status === 'finish' ? null : (
+            {game.status !== 'started' ? null : (
               <button
                 className="btn btn-success"
                 onClick={handleFinish}
