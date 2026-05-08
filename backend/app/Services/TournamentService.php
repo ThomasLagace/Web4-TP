@@ -28,13 +28,14 @@ class TournamentService
      * @param array $tournament
      * @return Tournament
      */
-    public function createTournament(array $tournament) : Tournament
+    public function createTournament(array $tournament, array $player_ids) : Tournament
     {
         $tournament = Tournament::create($tournament);
+        $tournament->players()->attach($player_ids);
 
         $rounds = $this->roundService->createRoundsForTournament($tournament);
 
-        $this->roundService->createGamesForRounds($rounds);
+        $this->roundService->createGamesForRounds($rounds, $tournament);
 
         return $tournament->load(['rounds', 'players']);
     }

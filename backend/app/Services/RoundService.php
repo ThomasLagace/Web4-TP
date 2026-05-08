@@ -35,9 +35,9 @@ class RoundService
      * @param Collection $rounds
      * @return void
      */
-    public function createGamesForRounds (Collection $rounds) {
+    public function createGamesForRounds (Collection $rounds, Tournament $tournament) {
 
-        $players = Player::with(['rank', 'tournaments'])->get();
+        $players = $this->pairingService->getPlayersLeft($tournament);
 
         foreach ($rounds as $index => $round) {
             $gamesCount = match($index) {
@@ -55,7 +55,7 @@ class RoundService
                         'status' => 'started',
                         'round_id' => $round->id
                     ]);
-                    $twoPlayers = $this->pairingService->pairPlayers($players, $round, $game);
+                    $twoPlayers = $this->pairingService->pairPlayers($players, $game);
                     $players = $players->diff($twoPlayers);
                 } else {
                     Game::create(['status' => 'pending', 'round_id' => $round->id]);
@@ -85,7 +85,7 @@ class RoundService
             $gamesToUpdate = $roundToStart->games()->get();
 
             foreach ($gamesToUpdate as $gameToUpd) {
-                $twoPlayers = $this->pairingService->pairPlayers($playersLeft, $roundToStart, $gameToUpd);
+                $twoPlayers = $this->pairingService->pairPlayers($playersLeft, $gameToUpd);
                 $gameToUpd->update(['start_time' => now()]);
                 $playersLeft = $playersLeft->diff($twoPlayers);
             }

@@ -25,7 +25,9 @@ class TournamentController extends Controller
      */
     public function store(TournamentRequest $request, TournamentService $tournamentService, NewsService $newsService) : TournamentResource
     {
-        $tournament = $tournamentService->createTournament($request->validated());
+        $tournament = $tournamentService->createTournament(
+            $request->safe()->except('player_ids'),
+            $request->input('player_ids'));
         $newsService->startTournamentNews($tournament);
         return new TournamentResource($tournament);
     }
