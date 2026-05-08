@@ -23,6 +23,21 @@ export default function PlayerPage() {
       })
   }, [id])
 
+  const handleDelete = () => {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer ce joueur ?")) return
+
+    setIsLoading(true)
+    setError('')
+    playersClient.delete(id)
+      .then(() => {
+        navigate('/players')
+      })
+      .catch((err) => {
+        setError('Une erreur est survenue lors de la suppression.')
+        setIsLoading(false)
+      })
+  }
+
   return (
     <div className="container py-4">
       {isLoading ? (
@@ -49,6 +64,16 @@ export default function PlayerPage() {
               onClick={() => navigate(`/players/${id}/edit`)}
             >
               Modifier
+            </button>
+          </div>
+
+          <div className="mb-4 d-flex gap-2">
+            <button
+              className="btn btn-danger"
+              onClick={handleDelete}
+              disabled={isLoading}
+            >
+              Supprimer
             </button>
           </div>
 

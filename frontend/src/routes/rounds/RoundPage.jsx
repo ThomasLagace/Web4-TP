@@ -29,6 +29,21 @@ export default function RoundPage() {
       })
   }, [id])
 
+  const handleDelete = () => {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cette ronde ?")) return
+
+    setIsLoading(true)
+    setError('')
+    roundsClient.delete(id)
+      .then(() => {
+        navigate('/rounds')
+      })
+      .catch((err) => {
+        setError('Une erreur est survenue lors de la suppression.')
+        setIsLoading(false)
+      })
+  }
+
   return (
     <div className="container py-4">
       {isLoading ? (
@@ -56,6 +71,16 @@ export default function RoundPage() {
               onClick={() => navigate(`/rounds/${id}/edit`)}
             >
               Modifier
+            </button>
+          </div>
+
+          <div className="mb-4 d-flex gap-2">
+            <button
+              className="btn btn-danger"
+              onClick={handleDelete}
+              disabled={isLoading}
+            >
+              Supprimer
             </button>
           </div>
 

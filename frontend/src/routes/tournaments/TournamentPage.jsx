@@ -29,6 +29,21 @@ export default function TournamentPage() {
       })
   }, [id])
 
+  const handleDelete = () => {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer ce tournoi ?")) return
+
+    setIsLoading(true)
+    setError('')
+    tournamentsClient.delete(id)
+      .then(() => {
+        navigate('/tournaments')
+      })
+      .catch((err) => {
+        setError('Une erreur est survenue lors de la suppression.')
+        setIsLoading(false)
+      })
+  }
+
   return (
     <div className="container py-4">
       {isLoading ? (
@@ -60,6 +75,16 @@ export default function TournamentPage() {
               </button>
             </div>
           )}
+
+          <div className="mb-4 d-flex gap-2">
+            <button
+              className="btn btn-danger"
+              onClick={handleDelete}
+              disabled={isLoading}
+            >
+              Supprimer
+            </button>
+          </div>
 
           <div className="row g-4 mb-5">
             <div className="col-md-6">

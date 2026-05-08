@@ -23,6 +23,21 @@ export default function NewsItemPage() {
       })
   }, [id])
 
+  const handleDelete = () => {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cette actualité ?")) return
+
+    setIsLoading(true)
+    setError('')
+    newsClient.delete(id)
+      .then(() => {
+        navigate('/news')
+      })
+      .catch((err) => {
+        setError('Une erreur est survenue lors de la suppression.')
+        setIsLoading(false)
+      })
+  }
+
   return (
     <div className="container py-4">
       {isLoading ? (
@@ -48,6 +63,16 @@ export default function NewsItemPage() {
               onClick={() => navigate(`/news/${id}/edit`)}
             >
               Modifier
+            </button>
+          </div>
+
+          <div className="mb-4 d-flex gap-2">
+            <button
+              className="btn btn-danger"
+              onClick={handleDelete}
+              disabled={isLoading}
+            >
+              Supprimer
             </button>
           </div>
 

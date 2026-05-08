@@ -26,6 +26,21 @@ export default function GamePage() {
       })
   }
 
+  const handleDelete = () => {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cette partie ?")) return
+
+    setIsLoading(true)
+    setError('')
+    gamesClient.delete(id)
+      .then(() => {
+        navigate('/games')
+      })
+      .catch((err) => {
+        setError('Une erreur est survenue lors de la suppression.')
+        setIsLoading(false)
+      })
+  }
+
   useEffect(() => {
     gamesClient.show(id)
       .then((res) => {
@@ -79,6 +94,16 @@ export default function GamePage() {
               )}
             </div>
           )}
+          
+          <div className="mb-4 d-flex gap-2">
+            <button
+              className="btn btn-danger"
+              onClick={handleDelete}
+              disabled={isLoading}
+            >
+              Supprimer
+            </button>
+          </div>
           <h1 className="mb-4">
             {game.white_player?.username ?? "À determiner"} contre {game.black_player?.username ?? "À determiner"}
           </h1>
