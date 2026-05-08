@@ -33,9 +33,9 @@ class TournamentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Tournament $t) : TournamentResource
+    public function show(Tournament $tournament) : TournamentResource
     {
-        return new TournamentResource($t);
+        return new TournamentResource($tournament);
     }
 
     /**
