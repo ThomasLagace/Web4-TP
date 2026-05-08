@@ -29,15 +29,6 @@ class RoundController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(RoundRequest $request) : RoundResource
-    {
-        $round = Round::create($request->validated());
-        return new RoundResource($round);
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(RoundRequest $request, Round $round) : RoundResource

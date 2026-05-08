@@ -24,8 +24,7 @@ class RoundRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:30'],
-            'points_multiplier' => ['required', 'integer', 'min:1', 'max:5'],
-            'tournament_id' => ['required', 'integer', 'exists:tournaments,id'],
+            'points_multiplier' => ['required', 'integer', 'min:1', 'max:100'],
         ];
     }
 }

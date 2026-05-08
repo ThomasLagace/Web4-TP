@@ -20,17 +20,6 @@ class GameController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(GameRequest $request) : GameResource
-    {
-        $game = Game::create($request->validated());
-        $game->calculateOddsForWhite();
-        $game->load(['whitePlayer', 'blackPlayer', 'winnerPlayer', 'round']);
-        return new GameResource($game);
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(Game $game) : GameResource
@@ -44,7 +33,7 @@ class GameController extends Controller
      */
     public function update(GameRequest $request, Game $game) : GameResource
     {
-        if ($game->status !== 'finished') {
+        if ($game->status === 'pending') {
             $game->update($request->validated());
             $game->calculateOddsForWhite();
             $game->load(['whitePlayer', 'blackPlayer', 'winnerPlayer', 'round']);

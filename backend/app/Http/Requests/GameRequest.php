@@ -26,11 +26,6 @@ class GameRequest extends FormRequest
     {
         return [
             'start_time' => ['date'],
-            'status' => [Rule::in('pending', 'started', 'finished')],
-            'round_id' => ['required', 'integer', 'exists:rounds,id'],
-            'white_player_id' => ['nullable', 'integer', 'exists:players,id'],
-            'black_player_id' => ['nullable', 'integer', 'exists:players,id'],
-            'winner_player_id' => ['nullable', 'integer', 'exists:players,id'],
         ];
     }
 }
