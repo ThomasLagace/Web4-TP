@@ -22,10 +22,19 @@ class TournamentRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'name' => ['required', 'string', 'max:50'],
-            'start_date' => ['required', 'date'],
-            'prize' => ['required', 'integer', 'min:0'],
-        ];
+        if ($this->method() === 'POST') {
+            return [
+                'name' => ['required', 'string', 'max:50'],
+                'start_date' => ['required', 'date'],
+                'prize' => ['required', 'integer', 'min:0'],
+                'player_ids' => ['required', 'array', 'min:16', 'max:16'],
+            ];
+        } else {
+            return [
+                'name' => ['required', 'string', 'max:50'],
+                'start_date' => ['required', 'date'],
+                'prize' => ['required', 'integer', 'min:0'],
+            ];
+        }
     }
 }
