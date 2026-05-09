@@ -6,6 +6,7 @@ use App\Http\Requests\PlayerRequest;
 use App\Http\Resources\PlayerCollection;
 use App\Http\Resources\PlayerResource;
 use App\Models\Player;
+use App\Models\Tournament;
 
 class PlayerController extends Controller
 {
@@ -47,9 +48,16 @@ class PlayerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Player $player) : \Illuminate\HTTP\Response
+    public function destroy(Player $player) : \Illuminate\HTTP\Response|\Illuminate\Http\JsonResponse
     {
-        $player->delete();
-        return response()->noContent();
+        $hasActiveTournaments = Tournament::where('status', '!=', 'finished')->exists();
+
+        if (!$hasActiveTournaments) {
+            $player->delete();
+            return response()->noContent();
+        }
+        else {
+            return response()->json(['message' => 'Cannot delete a player that is in an active tournament.']);
+        }
     }
 }

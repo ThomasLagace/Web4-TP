@@ -45,10 +45,15 @@ class GameController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Game $game) : \Illuminate\Http\Response
+    public function destroy(Game $game) : \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
     {
-        $game->delete();
-        return response()->noContent();
+        if ($game->status === "finished") {
+            $game->delete();
+            return response()->noContent();
+        }
+        else {
+            return response()->json(['message' => 'Cannot delete a game that isn\'t finished.']);
+        }
     }
 
     /**

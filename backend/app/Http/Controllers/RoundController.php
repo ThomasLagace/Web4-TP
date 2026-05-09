@@ -40,9 +40,13 @@ class RoundController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Round $round) : \Illuminate\Http\Response
+    public function destroy(Round $round) : \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
     {
-        $round->delete();
-        return response()->noContent();
+        if ($round->status === "finished") {
+            $round->delete();
+            return response()->noContent();
+        } else {
+            return response()->json(['message' => 'Cannot delete a round that isn\'t finished.']);
+        }
     }
 }
