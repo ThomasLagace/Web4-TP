@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ranksClient from '../../api/ranksClient'
 import useServerValidation from '../../hooks/useServerValidation'
+import useClientValidation from '../../hooks/useClientValidation'
 
 export default function CreateRankPage() {
   const navigate = useNavigate()

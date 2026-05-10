@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import ranksClient from '../../api/ranksClient'
 import useServerValidation from '../../hooks/useServerValidation'
+import useClientValidation from '../../hooks/useClientValidation'
 
 export default function EditRankPage() {
   const { id } = useParams()

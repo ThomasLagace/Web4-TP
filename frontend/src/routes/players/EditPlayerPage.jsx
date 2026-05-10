@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import playersClient from '../../api/playersClient'
 import useServerValidation from '../../hooks/useServerValidation'
+import useClientValidation from '../../hooks/useClientValidation'
 
 export default function EditPlayerPage() {
   const { id } = useParams()
