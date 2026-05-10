@@ -48,11 +48,9 @@ class PlayerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Player $player) : \Illuminate\HTTP\Response|\Illuminate\Http\JsonResponse
+    public function destroy(Player $player) : \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
     {
-        $hasActiveTournaments = Tournament::where('status', '!=', 'finished')->exists();
-
-        if (!$hasActiveTournaments) {
+        if (!$player->hasActiveTournaments()) {
             $player->delete();
             return response()->noContent();
         }

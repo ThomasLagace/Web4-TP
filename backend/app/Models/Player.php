@@ -45,6 +45,11 @@ class Player extends Model
             })->first();
     }
 
+    public function hasActiveTournaments()
+    {
+        return Tournament::where('status', '!=', 'finished')->exists();
+    }
+
     /**
      * Calculate the points obtained by the winner player
      * @param $multiplier

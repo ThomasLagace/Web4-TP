@@ -23,8 +23,7 @@ Route::middleware('throttle:100,1')->group(function () {
     // Route imbriquée pour visualiser les parties d'un round spécifique
     Route::get('/rounds/{round}/games', [RoundGameController::class, 'showGamesById']);
 
-    // Route '/' pour voir toutes les news des parties + filtrage
-    // CRUD
+    // Endpoint des nouvelles d'actualités
     Route::prefix('/news')
         ->controller(NewsController::class)
         ->group(function () {
@@ -35,8 +34,7 @@ Route::middleware('throttle:100,1')->group(function () {
             Route::delete('/{news}', 'destroy');
         });
 
-    // Route '/' pour observer les ranks + filtrage
-    // CRUD
+    // Endpoint des rangs que les joueurs peuvent atteindrent avec leurs elos
     Route::prefix('/ranks')
         ->controller(RankController::class)
         ->group(function () {
@@ -47,9 +45,7 @@ Route::middleware('throttle:100,1')->group(function () {
             Route::delete('/{rank}', 'destroy');
         });
 
-    // Route '/show' pour observer les stats d'un joueur spécifique
-    // Route '/' pour voir tous les joueurs
-    // CRUD
+    // Endpoint des joueurs de l'appli
     Route::prefix('/players')
         ->controller(PlayerController::class)
         ->group(function () {
@@ -60,8 +56,7 @@ Route::middleware('throttle:100,1')->group(function () {
             Route::delete('/{player}', 'destroy');
         });
 
-    // Route '/{games}/finish' pour stopper une partie
-    // CRUD
+    // Endpoint des parties d'un round de tournoi
     Route::prefix('/games')
         ->controller(GameController::class)
         ->group(function () {
@@ -73,8 +68,7 @@ Route::middleware('throttle:100,1')->group(function () {
             Route::post('/{game}/finish', 'finish');
         });
 
-    // Route '/store' pour créer un tournoi, les rounds et les parties se créent dans le TournamentService
-    // CRUD
+    // Endpoint des tournois
     Route::prefix('/tournaments')
         ->controller(TournamentController::class)
         ->group(function () {
@@ -85,8 +79,7 @@ Route::middleware('throttle:100,1')->group(function () {
             Route::delete('/{tournament}', 'destroy');
         });
 
-    // Route '/' pour observer les rounds
-    // CRUD
+    // Endpoint des rounds associés à un tournoi
     Route::prefix('/rounds')
         ->controller(RoundController::class)
         ->group(function () {
