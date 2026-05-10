@@ -76,7 +76,7 @@ export default function GamesPage() {
           </div>
           <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
             {gamesList.map((game) => (
-              <div className="col" key={game.gameId}>
+              <div className="col" key={game.id}>
                 <GameCard
                   gameId={game.id}
                   status={game.status}
