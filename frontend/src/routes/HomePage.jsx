@@ -81,8 +81,8 @@ export default function HomePage() {
     }
   }, [])
 
-  const latestTournament = dashboard.tournaments.items[0]
-  const latestNews = dashboard.news.items[0]
+  const latestTournament = dashboard.tournaments.items.toReversed()[0]
+  const latestNews = dashboard.news.items.toReversed()[0]
 
   return (
     <div className="bg-light min-vh-100">
