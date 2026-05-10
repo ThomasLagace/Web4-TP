@@ -23,6 +23,9 @@ class GameResource extends JsonResource
             'white_player_id' => $this->white_player_id,
             'black_player_id' => $this->black_player_id,
             'winner_player_id' => $this->winner_player_id,
+            'white_player' => new PlayerResource($this->whenLoaded('whitePlayer')),
+            'black_player' => new PlayerResource($this->whenLoaded('blackPlayer')),
+            'winner_player' => new PlayerResource($this->whenLoaded('winnerPlayer')),
             'meta' => [
                 'is_deletable' => $this->status === 'finished',
             ],
