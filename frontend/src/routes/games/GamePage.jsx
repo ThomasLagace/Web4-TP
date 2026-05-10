@@ -114,9 +114,11 @@ export default function GamePage() {
                       <span className="text-muted">Statut :</span>{" "}
                       <span className="badge bg-secondary">{game.status}</span>
                     </li>
-                    <li className="mb-2">
-                      <span className="text-muted">Début :</span> {game.start_time}
-                    </li>
+                    {game.start_time === null ? null : (
+                      <li className="mb-2">
+                        <span className="text-muted">Début :</span> {game.start_time}
+                      </li>
+                    )}
                     <li className="mb-2">
                       <span className="text-muted">Ronde :</span> #{game.round_id}
                     </li>

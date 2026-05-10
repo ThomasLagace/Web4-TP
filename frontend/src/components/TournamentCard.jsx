@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 
-export default function TournamentCard({ tournamentId, name, status, startDate, endDate, prize }) {
+export default function TournamentCard({ tournamentId, name, status, startDate, prize }) {
   const navigate = useNavigate()
 
   const handleClick = () => {
@@ -11,10 +11,10 @@ export default function TournamentCard({ tournamentId, name, status, startDate, 
     <div onClick={handleClick} className="card hover-card cursor-pointer user-select-none">
       <div className="card-body">
         <h5 className="card-title">{name}</h5>
-        <h6 className="card-subtitle text-muted mb-2">{startDate} – {endDate}</h6>
+        <h6 className="card-subtitle text-muted mb-2">{startDate}</h6>
         <div className="d-flex justify-content-between align-items-center mt-2">
           <span className="badge bg-secondary">{status}</span>
-          <span className="text-muted small">{prize} $</span>
+          <span className="text-muted small">{prize} elo</span>
         </div>
       </div>
     </div>
