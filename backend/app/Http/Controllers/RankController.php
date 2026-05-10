@@ -20,7 +20,7 @@ class RankController extends Controller
             $query ->where('name','LIKE','%'.request() -> get('name').'%');
         }
 
-        $ranks = $query->paginate(15);
+        $ranks = $query->orderBy('ranks.min_points')->paginate(15);
         return new RankCollection($ranks);
     }
 
