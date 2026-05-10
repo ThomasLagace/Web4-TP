@@ -25,7 +25,7 @@ class PlayerRequest extends FormRequest
         return [
             'username' => ['required', 'string', 'max:30'],
             'affiliation' => ['required', 'string', 'max:70'],
-            'points' => ['required', 'integer'],
+            'points' => ['required', 'integer', 'min:0'],
         ];
     }
 }
