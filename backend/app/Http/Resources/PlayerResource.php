@@ -20,9 +20,7 @@ class PlayerResource extends JsonResource
             'affiliation' => $this->affiliation,
             'points' => $this->points,
             'rank' => $this->rank,
-            'meta' => [
-              'is_deletable' => !$this->hasActiveTournaments(),
-            ],
+            'is_deletable' => !$this->hasActiveTournaments(),
         ];
     }
 }
