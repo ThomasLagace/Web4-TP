@@ -85,6 +85,7 @@ export default function CreatePlayerPage() {
                 {errors.points && <div className="text-danger mb-2">{errors.points[0]}</div>}
                 <input
                   name="points"
+                  min={0}
                   id="points"
                   type="number"
                   className="form-control"
