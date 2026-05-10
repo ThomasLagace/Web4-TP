@@ -43,7 +43,6 @@ export default function CreateTournamentPage() {
       })
       .catch((err) => {
         setError('Une erreur est survenue lors du chargement des joueurs.')
-        console.error(err)
       })
       .finally(() => {
         setIsLoadingPlayers(false)
@@ -71,7 +70,6 @@ export default function CreateTournamentPage() {
           handleServerErrors(err)
         } else {
           setError('Une erreur est survenue lors de la création du tournoi.')
-          console.error(err)
         }
       })
       .finally(() => {

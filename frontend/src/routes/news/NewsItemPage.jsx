@@ -16,7 +16,6 @@ export default function NewsItemPage() {
       })
       .catch((err) => {
         setError('Une erreur est survenue lors du chargement.')
-        console.error(err)
       })
       .finally(() => {
         setIsLoading(false)

@@ -29,7 +29,6 @@ export default function EditPlayerPage() {
       })
       .catch((err) => {
         setError('Une erreur est survenue lors du chargement.')
-        console.error(err)
       })
       .finally(() => {
         setIsLoading(false)
@@ -49,8 +48,6 @@ export default function EditPlayerPage() {
       .catch((err) => {
         if (err?.response?.status === 422) {
           handleServerErrors(err)
-        } else {
-          console.error(err)
         }
       })
       .finally(() => {
@@ -109,6 +106,7 @@ export default function EditPlayerPage() {
                 {errors.points && <div className="text-danger mb-2">{errors.points[0]}</div>}
                 <input
                   name="points"
+                  key={0}
                   id="points"
                   type="number"
                   className="form-control"

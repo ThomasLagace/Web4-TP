@@ -29,7 +29,6 @@ export default function CreateRankPage() {
           handleServerErrors(err)
         } else {
           setError('Une erreur est survenue lors de la création du rang.')
-          console.error(err)
         }
       })
       .finally(() => {

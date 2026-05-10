@@ -27,7 +27,6 @@ export default function EditNewsPage() {
       })
       .catch((err) => {
         setError('Une erreur est survenue lors du chargement.')
-        console.error(err)
       })
       .finally(() => {
         setIsLoading(false)
@@ -50,7 +49,6 @@ export default function EditNewsPage() {
           handleServerErrors(err)
         } else {
           setError('Une erreur est survenue lors de la mise à jour de l\'actualité.')
-          console.error(err)
         }
       })
       .finally(() => {

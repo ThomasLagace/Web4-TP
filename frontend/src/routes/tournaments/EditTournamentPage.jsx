@@ -29,7 +29,6 @@ export default function EditTournamentPage() {
       })
       .catch((err) => {
         setError('Une erreur est survenue lors du chargement.')
-        console.error(err)
       })
       .finally(() => {
         setIsLoading(false)
@@ -57,7 +56,6 @@ export default function EditTournamentPage() {
           handleServerErrors(err)
         } else {
           setError('Une erreur est survenue lors de la mise à jour du tournoi.')
-          console.error(err)
         }
       })
       .finally(() => {

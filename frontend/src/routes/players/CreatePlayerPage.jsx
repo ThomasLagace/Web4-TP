@@ -29,7 +29,6 @@ export default function CreatePlayerPage() {
           handleServerErrors(err)
         } else {
           setError('Une erreur est survenue lors de la création du joueur.')
-          console.error(err)
         }
       })
       .finally(() => {
@@ -85,6 +84,7 @@ export default function CreatePlayerPage() {
                 {errors.points && <div className="text-danger mb-2">{errors.points[0]}</div>}
                 <input
                   name="points"
+                  min={0}
                   id="points"
                   type="number"
                   className="form-control"
