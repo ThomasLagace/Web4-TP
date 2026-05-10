@@ -26,7 +26,8 @@ class Player extends Model
         return $this->hasMany(Game::class, 'winner_player_id');
     }
 
-    public function tournaments() {
+    public function tournaments()
+    {
         return $this->belongsToMany(Tournament::class)
             ->withPivot('is_eliminated')
             ->withTimestamps();
@@ -34,9 +35,9 @@ class Player extends Model
 
     /**
      * Calculates the rank of the player by its amount of points
-     * @return void
+     * @return Rank
      */
-    public function getRankAttribute()
+    public function getRankAttribute(): Rank
     {
         return Rank::where('min_points', '<=', $this->points)
             ->where(function ($query) {
@@ -45,7 +46,11 @@ class Player extends Model
             })->first();
     }
 
-    public function hasActiveTournaments()
+    /**
+     * Checks if the selected player is in an active tournament and return a bool
+     * @return boolean
+     */
+    public function hasActiveTournaments(): bool
     {
         return Tournament::where('status', '!=', 'finished')->exists();
     }
@@ -56,7 +61,7 @@ class Player extends Model
      * @param $odds
      * @return void
      */
-    public function calculatePoints($multiplier, $odds)
+    public function calculatePoints($multiplier, $odds): void
     {
         $this->update(['points' => $this->points + $multiplier * (100 - $odds) + 400]);
     }

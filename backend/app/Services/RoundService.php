@@ -16,8 +16,8 @@ class RoundService
      * @param Tournament $tournament
      * @return mixed
      */
-    public function createRoundsForTournament (Tournament $tournament) {
-
+    public function createRoundsForTournament (Tournament $tournament)
+    {
         $data = [
             ['name' => 'Round 1', 'points_multiplier' => 1, 'status' => 'started', 'tournament_id' => $tournament->id],
             ['name' => 'Round 2', 'points_multiplier' => 2, 'status' => 'pending', 'tournament_id' => $tournament->id],
@@ -32,10 +32,11 @@ class RoundService
     /**
      * Creation of every game for every round of a given collection
      * @param Collection $rounds
+     * @param Tournament $tournament
      * @return void
      */
-    public function createGamesForRounds (Collection $rounds, Tournament $tournament) {
-
+    public function createGamesForRounds (Collection $rounds, Tournament $tournament)
+    {
         $players = $this->pairingService->getPlayersLeft($tournament);
 
         foreach ($rounds as $index => $round) {
@@ -68,8 +69,8 @@ class RoundService
      * @param Game $game
      * @return string
      */
-    public function changeRound (Game $game) {
-
+    public function changeRound (Game $game)
+    {
         $game->load(['whitePlayer', 'blackPlayer', 'winnerPlayer', 'round.tournament']);
         $roundToStart = Round::where('tournament_id', $game->round->tournament->id)
                             ->where('status', 'pending')

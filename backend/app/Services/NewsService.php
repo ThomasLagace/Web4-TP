@@ -14,7 +14,8 @@ class NewsService
      * @param Tournament $tournament
      * @return void
      */
-    public function startTournamentNews(Tournament $tournament): void {
+    public function startTournamentNews(Tournament $tournament): void
+    {
         News::create([
             'date' => now(),
             'title' => 'Un nouveau tournoi a commencé',
@@ -31,7 +32,8 @@ class NewsService
      * @param Game $game
      * @return void
      */
-    public function endTournamentNews(Tournament $tournament, Game $game): void {
+    public function endTournamentNews(Tournament $tournament, Game $game): void
+    {
         News::create([
             'date' => now(),
             'title' => $tournament->name . ' terminé',
@@ -54,7 +56,8 @@ class NewsService
      * @param Round $roundToStart
      * @return void
      */
-    public function endRoundNews(Game $game, Round $roundToStart): void {
+    public function endRoundNews(Game $game, Round $roundToStart): void
+    {
         News::create([
             'date' => now(),
             'title' => 'Changement de round - ' . $roundToStart->tournament->name,
@@ -73,7 +76,8 @@ class NewsService
      * @param Game $game
      * @return void
      */
-    public function endGameNews(Game $game) {
+    public function endGameNews(Game $game)
+    {
         News::create([
             'date' => now(),
             'title' => 'Partie terminée - ' . $game->round->tournament->name,

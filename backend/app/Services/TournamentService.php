@@ -26,6 +26,7 @@ class TournamentService
     /**
      * Handle the creation of a tournament
      * @param array $tournament
+     * @param array $player_ids
      * @return Tournament
      */
     public function createTournament(array $tournament, array $player_ids) : Tournament
