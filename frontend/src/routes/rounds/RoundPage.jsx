@@ -8,6 +8,7 @@ export default function RoundPage() {
   const navigate = useNavigate()
   const [round, setRound] = useState()
   const [games, setGames] = useState([])
+  const [isDeletable, setIsDeletable] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -19,6 +20,7 @@ export default function RoundPage() {
       .then(([roundRes, gamesRes]) => {
         setRound(roundRes.data["data"])
         setGames(gamesRes.data["data"])
+        setIsDeletable(roundRes.data?.data?.is_deletable ?? true)
       })
       .catch((err) => {
         setError('Une erreur est survenue lors du chargement.')
@@ -75,7 +77,8 @@ export default function RoundPage() {
             <button
               className="btn btn-danger"
               onClick={handleDelete}
-              disabled={isLoading}
+              disabled={isLoading || !isDeletable}
+              title={!isDeletable ? "Suppression non autorisée" : undefined}
             >
               Supprimer
             </button>

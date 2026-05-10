@@ -6,6 +6,7 @@ export default function GamePage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [game, setGame] = useState()
+  const [isDeletable, setIsDeletable] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -45,6 +46,7 @@ export default function GamePage() {
     gamesClient.show(id)
       .then((res) => {
         setGame(res.data["data"])
+        setIsDeletable(res.data?.data?.is_deletable ?? true)
       })
       .catch((err) => {
         setError('Une erreur est survenue lors du chargement.')
@@ -93,7 +95,8 @@ export default function GamePage() {
             <button
               className="btn btn-danger"
               onClick={handleDelete}
-              disabled={isLoading}
+              disabled={isLoading || !isDeletable}
+              title={!isDeletable ? "Suppression non autorisée" : undefined}
             >
               Supprimer
             </button>

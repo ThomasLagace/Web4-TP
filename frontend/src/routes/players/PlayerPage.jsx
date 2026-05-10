@@ -6,6 +6,7 @@ export default function PlayerPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [player, setPlayer] = useState()
+  const [isDeletable, setIsDeletable] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -13,6 +14,7 @@ export default function PlayerPage() {
     playersClient.show(id)
       .then((res) => {
         setPlayer(res.data["data"])
+        setIsDeletable(res.data?.data?.is_deletable ?? true)
       })
       .catch((err) => {
         setError('Une erreur est survenue lors du chargement.')
@@ -68,7 +70,8 @@ export default function PlayerPage() {
             <button
               className="btn btn-danger"
               onClick={handleDelete}
-              disabled={isLoading}
+              disabled={isLoading || !isDeletable}
+              title={!isDeletable ? "Suppression non autorisée" : undefined}
             >
               Supprimer
             </button>
