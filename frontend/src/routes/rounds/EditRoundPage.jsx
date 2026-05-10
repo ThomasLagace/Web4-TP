@@ -15,7 +15,8 @@ export default function EditRoundPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
-  const { errors, handleServerErrors, clearErrors } = useServerValidation()
+  const { errors, setErrors, handleServerErrors, clearErrors } = useServerValidation()
+  const { validate } = useClientValidation()
 
   useEffect(() => {
     Promise.all([
@@ -40,6 +41,19 @@ export default function EditRoundPage() {
 
     setError('')
     clearErrors()
+    const clientErrors = validate({
+      name: { required: true },
+      points_multiplier: { numeric: true, min: 1 },
+    }, { name, points_multiplier: pointsMultiplier })
+
+    if (Object.keys(clientErrors).length > 0) {
+      setErrors(clientErrors)
+      const first = Object.keys(clientErrors)[0]
+      const el = document.querySelector(`[name="${first}"]`) || document.getElementById(first)
+      if (el && el.focus) el.focus()
+      setIsSaving(false)
+      return
+    }
     setIsSaving(true)
 
     roundsClient.update(

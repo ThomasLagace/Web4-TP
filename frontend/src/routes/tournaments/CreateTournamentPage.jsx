@@ -5,6 +5,7 @@ import Pagination from '../../components/Pagination'
 import tournamentsClient from '../../api/tournamentsClient'
 import playersClient from '../../api/playersClient'
 import useServerValidation from '../../hooks/useServerValidation'
+import useClientValidation from '../../hooks/useClientValidation'
 
 const MAX_PLAYERS = 16
 
@@ -24,7 +25,8 @@ export default function CreateTournamentPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [isLoadingPlayers, setIsLoadingPlayers] = useState(true)
   const [error, setError] = useState('')
-  const { errors, handleServerErrors, clearErrors } = useServerValidation()
+  const { errors, setErrors, handleServerErrors, clearErrors } = useServerValidation()
+  const { validate } = useClientValidation()
 
   useEffect(() => {
     setIsLoadingPlayers(true)
@@ -54,6 +56,21 @@ export default function CreateTournamentPage() {
 
     setError('')
     clearErrors()
+    const clientErrors = validate({
+      name: { required: true, minLength: 3 },
+      start_date: { required: true },
+      prize: { numeric: true, min: 0 },
+      playerIds: { required: true },
+    }, { name, start_date: startDate, prize, playerIds })
+
+    if (Object.keys(clientErrors).length > 0) {
+      setErrors(clientErrors)
+      const first = Object.keys(clientErrors)[0]
+      const el = document.querySelector(`[name="${first}"]`) || document.getElementById(first)
+      if (el && el.focus) el.focus()
+      setIsSaving(false)
+      return
+    }
     setIsSaving(true)
 
     tournamentsClient.store(

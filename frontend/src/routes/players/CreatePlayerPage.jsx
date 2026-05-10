@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import playersClient from '../../api/playersClient'
 import useServerValidation from '../../hooks/useServerValidation'
+import useClientValidation from '../../hooks/useClientValidation'
 
 export default function CreatePlayerPage() {
   const navigate = useNavigate()
@@ -11,13 +12,28 @@ export default function CreatePlayerPage() {
   const [points, setPoints] = useState(0)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
-  const { errors, handleServerErrors, clearErrors } = useServerValidation()
+  const { errors, setErrors, handleServerErrors, clearErrors } = useServerValidation()
+  const { validate } = useClientValidation()
 
   const handleSubmit = (e) => {
     e.preventDefault()
 
     setError('')
     clearErrors()
+    const clientErrors = validate({
+      username: { required: true, minLength: 2 },
+      affiliation: { required: true },
+      points: { numeric: true },
+    }, { username, affiliation, points })
+
+    if (Object.keys(clientErrors).length > 0) {
+      setErrors(clientErrors)
+      const first = Object.keys(clientErrors)[0]
+      const el = document.querySelector(`[name="${first}"]`) || document.getElementById(first)
+      if (el && el.focus) el.focus()
+      setIsSaving(false)
+      return
+    }
     setIsSaving(true)
 
     playersClient.store(username, affiliation, points)

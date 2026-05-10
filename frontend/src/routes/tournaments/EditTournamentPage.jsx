@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 import tournamentsClient from '../../api/tournamentsClient'
 import useServerValidation from '../../hooks/useServerValidation'
+import useClientValidation from '../../hooks/useClientValidation'
 
 export default function EditTournamentPage() {
   const { id } = useParams()
@@ -16,7 +17,8 @@ export default function EditTournamentPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
-  const { errors, handleServerErrors, clearErrors } = useServerValidation()
+  const { errors, setErrors, handleServerErrors, clearErrors } = useServerValidation()
+  const { validate } = useClientValidation()
 
   useEffect(() => {
     tournamentsClient.show(id)
@@ -40,6 +42,20 @@ export default function EditTournamentPage() {
 
     setError('')
     clearErrors()
+    const clientErrors = validate({
+      name: { required: true, minLength: 3 },
+      start_date: { required: true },
+      prize: { numeric: true, min: 0 }
+    }, { name, start_date: startDate, prize })
+
+    if (Object.keys(clientErrors).length > 0) {
+      setErrors(clientErrors)
+      const first = Object.keys(clientErrors)[0]
+      const el = document.querySelector(`[name="${first}"]`) || document.getElementById(first)
+      if (el && el.focus) el.focus()
+      setIsSaving(false)
+      return
+    }
     setIsSaving(true)
 
     tournamentsClient.update(

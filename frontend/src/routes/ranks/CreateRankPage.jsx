@@ -11,13 +11,28 @@ export default function CreateRankPage() {
   const [maxPoints, setMaxPoints] = useState(0)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
-  const { errors, handleServerErrors, clearErrors } = useServerValidation()
+  const { errors, setErrors, handleServerErrors, clearErrors } = useServerValidation()
+  const { validate } = useClientValidation()
 
   const handleSubmit = (e) => {
     e.preventDefault()
 
     setError('')
     clearErrors()
+    const clientErrors = validate({
+      name: { required: true },
+      min_points: { numeric: true },
+      max_points: { numeric: true },
+    }, { name, min_points: minPoints, max_points: maxPoints })
+
+    if (Object.keys(clientErrors).length > 0) {
+      setErrors(clientErrors)
+      const first = Object.keys(clientErrors)[0]
+      const el = document.querySelector(`[name="${first}"]`) || document.getElementById(first)
+      if (el && el.focus) el.focus()
+      setIsSaving(false)
+      return
+    }
     setIsSaving(true)
 
     ranksClient.store(parseInt(minPoints || 0, 10), parseInt(maxPoints || 0, 10), name)

@@ -14,7 +14,8 @@ export default function EditPlayerPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
-  const { errors, handleServerErrors, clearErrors } = useServerValidation()
+  const { errors, setErrors, handleServerErrors, clearErrors } = useServerValidation()
+  const { validate } = useClientValidation()
 
   useEffect(() => {
     Promise.all([
@@ -40,6 +41,20 @@ export default function EditPlayerPage() {
 
     setIsSaving(true)
     clearErrors()
+    const clientErrors = validate({
+      username: { required: true, minLength: 2 },
+      affiliation: { required: true },
+      points: { numeric: true },
+    }, { username, affiliation, points })
+
+    if (Object.keys(clientErrors).length > 0) {
+      setErrors(clientErrors)
+      const first = Object.keys(clientErrors)[0]
+      const el = document.querySelector(`[name="${first}"]`) || document.getElementById(first)
+      if (el && el.focus) el.focus()
+      setIsSaving(false)
+      return
+    }
 
     playersClient.update(id, username, affiliation, points)
       .then(() => {

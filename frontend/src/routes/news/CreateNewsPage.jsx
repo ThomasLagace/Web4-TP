@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import newsClient from '../../api/newsClient'
 import useServerValidation from '../../hooks/useServerValidation'
+import useClientValidation from '../../hooks/useClientValidation'
 
 export default function CreateNewsPage() {
   const navigate = useNavigate()
@@ -11,13 +12,30 @@ export default function CreateNewsPage() {
   const [content, setContent] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
-  const { errors, handleServerErrors, clearErrors } = useServerValidation()
+  const { errors, setErrors, handleServerErrors, clearErrors } = useServerValidation()
+  const { validate } = useClientValidation()
 
   const handleSubmit = (e) => {
     e.preventDefault()
 
     setError('')
     clearErrors()
+    // client-side validate
+    const clientErrors = validate({
+      date: { required: true },
+      title: { required: true, minLength: 3 },
+      content: { required: true, minLength: 3 },
+    }, { date, title, content })
+
+    if (Object.keys(clientErrors).length > 0) {
+      // show client errors and focus first
+      setErrors(clientErrors)
+      const first = Object.keys(clientErrors)[0]
+      const el = document.querySelector(`[name="${first}"]`) || document.getElementById(first)
+      if (el && el.focus) el.focus()
+      setIsSaving(false)
+      return
+    }
     setIsSaving(true)
 
     newsClient.store(date, title, content)

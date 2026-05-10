@@ -5,6 +5,7 @@ import gamesClient from '../../api/gamesClient'
 import roundsClient from '../../api/roundsClient'
 import playersClient from '../../api/playersClient'
 import useServerValidation from '../../hooks/useServerValidation'
+import useClientValidation from '../../hooks/useClientValidation'
 
 export default function EditGamePage() {
   const { id } = useParams()
@@ -18,7 +19,8 @@ export default function EditGamePage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
-  const { errors, handleServerErrors, clearErrors } = useServerValidation()
+  const { errors, setErrors, handleServerErrors, clearErrors } = useServerValidation()
+  const { validate } = useClientValidation()
 
   useEffect(() => {
     Promise.all([
@@ -47,6 +49,16 @@ export default function EditGamePage() {
 
     setError('')
     clearErrors()
+    // client-side validation
+    const clientErrors = validate({ start_time: { required: true } }, { start_time: startTime })
+    if (Object.keys(clientErrors).length > 0) {
+      setErrors(clientErrors)
+      const first = Object.keys(clientErrors)[0]
+      const el = document.querySelector(`[name="${first}"]`) || document.getElementById(first)
+      if (el && el.focus) el.focus()
+      setIsSaving(false)
+      return
+    }
     setIsSaving(true)
 
     gamesClient.update(

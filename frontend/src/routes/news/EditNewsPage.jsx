@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import newsClient from '../../api/newsClient'
 import useServerValidation from '../../hooks/useServerValidation'
+import useClientValidation from '../../hooks/useClientValidation'
 
 export default function EditNewsPage() {
   const { id } = useParams()
@@ -14,7 +15,8 @@ export default function EditNewsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
-  const { errors, handleServerErrors, clearErrors } = useServerValidation()
+  const { errors, setErrors, handleServerErrors, clearErrors } = useServerValidation()
+  const { validate } = useClientValidation()
 
   useEffect(() => {
     newsClient.show(id)
@@ -40,6 +42,20 @@ export default function EditNewsPage() {
     setIsSaving(true)
 
     clearErrors()
+    const clientErrors = validate({
+      date: { required: true },
+      title: { required: true, minLength: 3 },
+      content: { required: true, minLength: 3 },
+    }, { date, title, content })
+
+    if (Object.keys(clientErrors).length > 0) {
+      setErrors(clientErrors)
+      const first = Object.keys(clientErrors)[0]
+      const el = document.querySelector(`[name="${first}"]`) || document.getElementById(first)
+      if (el && el.focus) el.focus()
+      setIsSaving(false)
+      return
+    }
     newsClient.update(id, date, title, content)
       .then(() => {
         navigate(`/news/${id}`)
