@@ -20,6 +20,7 @@ class RoundResource extends JsonResource
             'status' => $this->status,
             'points_multiplier' => $this->points_multiplier,
             'tournament_id' => $this->tournament_id,
+            'tournament' => new RoundResource($this->whenLoaded('tournament')),
             'meta' => [
                 'is_deletable' => $this->status === 'finished',
             ],
