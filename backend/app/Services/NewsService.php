@@ -21,7 +21,7 @@ class NewsService
             'content' =>
                 'Le ' .
                 $tournament->name .
-                ' ouvre ses portes à l\'instant! Venez encourager vos joueurs préférés à distance sur notre site web directement. Bon visionnage!'
+                ' ouvre ses portes à l\'instant! Venez encourager vos joueurs préférés à distance directement sur notre site web. Bon visionnage!'
         ]);
     }
 
