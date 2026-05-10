@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import ranksClient from '../../api/ranksClient'
+import useServerValidation from '../../hooks/useServerValidation'
 
 export default function EditRankPage() {
   const { id } = useParams()
@@ -13,6 +14,7 @@ export default function EditRankPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
+  const { errors, handleServerErrors, clearErrors } = useServerValidation()
 
   useEffect(() => {
     ranksClient.show(id)
@@ -35,6 +37,7 @@ export default function EditRankPage() {
   const handleSubmit = (e) => {
     e.preventDefault()
     setError('')
+    clearErrors()
     setIsSaving(true)
 
     ranksClient.update(id, parseInt(minPoints || 0, 10), parseInt(maxPoints || 0, 10), name)
@@ -42,8 +45,12 @@ export default function EditRankPage() {
         navigate(`/ranks/${id}`)
       })
       .catch((err) => {
-        setError('Une erreur est survenue lors de la mise à jour du rang.')
-        console.error(err)
+        if (err?.response?.status === 422) {
+          handleServerErrors(err)
+        } else {
+          setError('Une erreur est survenue lors de la mise à jour du rang.')
+          console.error(err)
+        }
       })
       .finally(() => {
         setIsSaving(false)
@@ -71,7 +78,10 @@ export default function EditRankPage() {
 
               <div className="mb-3">
                 <label className="form-label">Nom</label>
+                {errors.name && <div className="text-danger mb-2">{errors.name[0]}</div>}
                 <input
+                  name="name"
+                  id="name"
                   type="text"
                   className="form-control"
                   value={name}
@@ -81,7 +91,10 @@ export default function EditRankPage() {
 
               <div className="mb-3">
                 <label className="form-label">Elo minimum</label>
+                {errors.min_points && <div className="text-danger mb-2">{errors.min_points[0]}</div>}
                 <input
+                  name="min_points"
+                  id="min_points"
                   type="number"
                   min={0}
                   max={maxPoints}
@@ -93,7 +106,10 @@ export default function EditRankPage() {
 
               <div className="mb-3">
                 <label className="form-label">Elo maximum</label>
+                {errors.max_points && <div className="text-danger mb-2">{errors.max_points[0]}</div>}
                 <input
+                  name="max_points"
+                  id="max_points"
                   type="number"
                   min={minPoints}
                   className="form-control"

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import playersClient from '../../api/playersClient'
+import useServerValidation from '../../hooks/useServerValidation'
 
 export default function CreatePlayerPage() {
   const navigate = useNavigate()
@@ -10,11 +11,13 @@ export default function CreatePlayerPage() {
   const [points, setPoints] = useState(0)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
+  const { errors, handleServerErrors, clearErrors } = useServerValidation()
 
   const handleSubmit = (e) => {
     e.preventDefault()
 
     setError('')
+    clearErrors()
     setIsSaving(true)
 
     playersClient.store(username, affiliation, points)
@@ -22,8 +25,12 @@ export default function CreatePlayerPage() {
         navigate('/players')
       })
       .catch((err) => {
-        setError('Une erreur est survenue lors de la création du joueur.')
-        console.error(err)
+        if (err?.response?.status === 422) {
+          handleServerErrors(err)
+        } else {
+          setError('Une erreur est survenue lors de la création du joueur.')
+          console.error(err)
+        }
       })
       .finally(() => {
         setIsSaving(false)
@@ -49,7 +56,10 @@ export default function CreatePlayerPage() {
 
               <div className="mb-3">
                 <label className="form-label">Nom d'utilisateur</label>
+                {errors.username && <div className="text-danger mb-2">{errors.username[0]}</div>}
                 <input
+                  name="username"
+                  id="username"
                   type="text"
                   className="form-control"
                   value={username}
@@ -59,7 +69,10 @@ export default function CreatePlayerPage() {
 
               <div className="mb-3">
                 <label className="form-label">Affiliation</label>
+                {errors.affiliation && <div className="text-danger mb-2">{errors.affiliation[0]}</div>}
                 <input
+                  name="affiliation"
+                  id="affiliation"
                   type="text"
                   className="form-control"
                   value={affiliation}
@@ -69,7 +82,10 @@ export default function CreatePlayerPage() {
 
               <div className="mb-3">
                 <label className="form-label">Points</label>
+                {errors.points && <div className="text-danger mb-2">{errors.points[0]}</div>}
                 <input
+                  name="points"
+                  id="points"
                   type="number"
                   className="form-control"
                   value={points}

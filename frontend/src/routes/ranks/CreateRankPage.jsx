@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ranksClient from '../../api/ranksClient'
+import useServerValidation from '../../hooks/useServerValidation'
 
 export default function CreateRankPage() {
   const navigate = useNavigate()
@@ -10,11 +11,13 @@ export default function CreateRankPage() {
   const [maxPoints, setMaxPoints] = useState(0)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
+  const { errors, handleServerErrors, clearErrors } = useServerValidation()
 
   const handleSubmit = (e) => {
     e.preventDefault()
 
     setError('')
+    clearErrors()
     setIsSaving(true)
 
     ranksClient.store(parseInt(minPoints || 0, 10), parseInt(maxPoints || 0, 10), name)
@@ -22,8 +25,12 @@ export default function CreateRankPage() {
         navigate('/ranks')
       })
       .catch((err) => {
-        setError('Une erreur est survenue lors de la création du rang.')
-        console.error(err)
+        if (err?.response?.status === 422) {
+          handleServerErrors(err)
+        } else {
+          setError('Une erreur est survenue lors de la création du rang.')
+          console.error(err)
+        }
       })
       .finally(() => {
         setIsSaving(false)
@@ -46,7 +53,10 @@ export default function CreateRankPage() {
 
             <div className="mb-3">
               <label className="form-label">Nom</label>
+              {errors.name && <div className="text-danger mb-2">{errors.name[0]}</div>}
               <input
+                name="name"
+                id="name"
                 type="text"
                 className="form-control"
                 value={name}
@@ -56,7 +66,10 @@ export default function CreateRankPage() {
 
             <div className="mb-3">
               <label className="form-label">Elo minimum</label>
+              {errors.min_points && <div className="text-danger mb-2">{errors.min_points[0]}</div>}
               <input
+                name="min_points"
+                id="min_points"
                 type="number"
                 min={0}
                 max={maxPoints}
@@ -68,7 +81,10 @@ export default function CreateRankPage() {
 
             <div className="mb-3">
               <label className="form-label">Elo maximum</label>
+              {errors.max_points && <div className="text-danger mb-2">{errors.max_points[0]}</div>}
               <input
+                name="max_points"
+                id="max_points"
                 type="number"
                 min={minPoints}
                 className="form-control"

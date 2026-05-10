@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import roundsClient from '../../api/roundsClient'
+import useServerValidation from '../../hooks/useServerValidation'
 
 export default function EditRoundPage() {
   const { id } = useParams()
@@ -14,6 +15,7 @@ export default function EditRoundPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
+  const { errors, handleServerErrors, clearErrors } = useServerValidation()
 
   useEffect(() => {
     Promise.all([
@@ -38,6 +40,7 @@ export default function EditRoundPage() {
     e.preventDefault()
 
     setError('')
+    clearErrors()
     setIsSaving(true)
 
     roundsClient.update(
@@ -49,8 +52,12 @@ export default function EditRoundPage() {
         navigate(`/rounds/${id}`)
       })
       .catch((err) => {
-        setError('Une erreur est survenue lors de la mise à jour du round.')
-        console.error(err)
+        if (err?.response?.status === 422) {
+          handleServerErrors(err)
+        } else {
+          setError('Une erreur est survenue lors de la mise à jour du round.')
+          console.error(err)
+        }
       })
       .finally(() => {
         setIsSaving(false)
@@ -79,7 +86,10 @@ export default function EditRoundPage() {
               <div className="mb-3">
                 <label className="form-label">Nom</label>
 
+                {errors.name && <div className="text-danger mb-2">{errors.name[0]}</div>}
                 <input
+                  name="name"
+                  id="name"
                   type="text"
                   className="form-control"
                   value={name}
@@ -90,7 +100,10 @@ export default function EditRoundPage() {
               <div className="mb-3">
                 <label className="form-label">Multiplicateur de points</label>
 
+                {errors.points_multiplier && <div className="text-danger mb-2">{errors.points_multiplier[0]}</div>}
                 <input
+                  name="points_multiplier"
+                  id="points_multiplier"
                   type="number"
                   className="form-control"
                   min={1}

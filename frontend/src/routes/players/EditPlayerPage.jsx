@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import playersClient from '../../api/playersClient'
+import useServerValidation from '../../hooks/useServerValidation'
 
 export default function EditPlayerPage() {
   const { id } = useParams()
@@ -13,6 +14,7 @@ export default function EditPlayerPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
+  const { errors, handleServerErrors, clearErrors } = useServerValidation()
 
   useEffect(() => {
     Promise.all([
@@ -38,10 +40,18 @@ export default function EditPlayerPage() {
     e.preventDefault()
 
     setIsSaving(true)
+    clearErrors()
 
     playersClient.update(id, username, affiliation, points)
       .then(() => {
         navigate(`/players/${id}`)
+      })
+      .catch((err) => {
+        if (err?.response?.status === 422) {
+          handleServerErrors(err)
+        } else {
+          console.error(err)
+        }
       })
       .finally(() => {
         setIsSaving(false)
@@ -70,7 +80,10 @@ export default function EditPlayerPage() {
 
               <div className="mb-3">
                 <label className="form-label">Nom d'utilisateur</label>
+                {errors.username && <div className="text-danger mb-2">{errors.username[0]}</div>}
                 <input
+                  name="username"
+                  id="username"
                   type="text"
                   className="form-control"
                   value={username}
@@ -80,7 +93,10 @@ export default function EditPlayerPage() {
 
               <div className="mb-3">
                 <label className="form-label">Affiliation</label>
+                {errors.affiliation && <div className="text-danger mb-2">{errors.affiliation[0]}</div>}
                 <input
+                  name="affiliation"
+                  id="affiliation"
                   type="text"
                   className="form-control"
                   value={affiliation}
@@ -90,7 +106,10 @@ export default function EditPlayerPage() {
 
               <div className="mb-3">
                 <label className="form-label">Points</label>
+                {errors.points && <div className="text-danger mb-2">{errors.points[0]}</div>}
                 <input
+                  name="points"
+                  id="points"
                   type="number"
                   className="form-control"
                   value={points}

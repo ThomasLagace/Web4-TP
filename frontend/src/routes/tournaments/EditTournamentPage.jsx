@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import tournamentsClient from '../../api/tournamentsClient'
+import useServerValidation from '../../hooks/useServerValidation'
 
 export default function EditTournamentPage() {
   const { id } = useParams()
@@ -15,6 +16,7 @@ export default function EditTournamentPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
+  const { errors, handleServerErrors, clearErrors } = useServerValidation()
 
   useEffect(() => {
     tournamentsClient.show(id)
@@ -38,6 +40,7 @@ export default function EditTournamentPage() {
     e.preventDefault()
 
     setError('')
+    clearErrors()
     setIsSaving(true)
 
     tournamentsClient.update(
@@ -50,8 +53,12 @@ export default function EditTournamentPage() {
         navigate(`/tournaments/${id}`)
       })
       .catch((err) => {
-        setError('Une erreur est survenue lors de la mise à jour du tournoi.')
-        console.error(err)
+        if (err?.response?.status === 422) {
+          handleServerErrors(err)
+        } else {
+          setError('Une erreur est survenue lors de la mise à jour du tournoi.')
+          console.error(err)
+        }
       })
       .finally(() => {
         setIsSaving(false)
@@ -80,7 +87,10 @@ export default function EditTournamentPage() {
               <div className="mb-3">
                 <label className="form-label">Nom</label>
 
+                {errors.name && <div className="text-danger mb-2">{errors.name[0]}</div>}
                 <input
+                  name="name"
+                  id="name"
                   type="text"
                   className="form-control"
                   value={name}
@@ -91,7 +101,10 @@ export default function EditTournamentPage() {
               <div className="mb-3">
                 <label className="form-label">Date de début</label>
 
+                {errors.start_date && <div className="text-danger mb-2">{errors.start_date[0]}</div>}
                 <input
+                  name="start_date"
+                  id="start_date"
                   type="date"
                   className="form-control"
                   value={startDate}
@@ -102,7 +115,10 @@ export default function EditTournamentPage() {
               <div className="mb-3">
                 <label className="form-label">Prix</label>
 
+                {errors.prize && <div className="text-danger mb-2">{errors.prize[0]}</div>}
                 <input
+                  name="prize"
+                  id="prize"
                   type="number"
                   step="0.01"
                   className="form-control"

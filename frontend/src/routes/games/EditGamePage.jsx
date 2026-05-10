@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import gamesClient from '../../api/gamesClient'
 import roundsClient from '../../api/roundsClient'
 import playersClient from '../../api/playersClient'
+import useServerValidation from '../../hooks/useServerValidation'
 
 export default function EditGamePage() {
   const { id } = useParams()
@@ -17,6 +18,7 @@ export default function EditGamePage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
+  const { errors, handleServerErrors, clearErrors } = useServerValidation()
 
   useEffect(() => {
     Promise.all([
@@ -45,6 +47,7 @@ export default function EditGamePage() {
     e.preventDefault()
 
     setError('')
+    clearErrors()
     setIsSaving(true)
 
     gamesClient.update(
@@ -55,8 +58,12 @@ export default function EditGamePage() {
         navigate(`/games/${id}`)
       })
       .catch((err) => {
-        setError('Une erreur est survenue lors de la mise à jour de la partie.')
-        console.error(err)
+        if (err?.response?.status === 422) {
+          handleServerErrors(err)
+        } else {
+          setError('Une erreur est survenue lors de la mise à jour de la partie.')
+          console.error(err)
+        }
       })
       .finally(() => {
         setIsSaving(false)
@@ -93,8 +100,10 @@ export default function EditGamePage() {
 
             <div className="mb-3">
               <label className="form-label">Date et heure</label>
-
+              {errors.start_time && <div className="text-danger mb-2">{errors.start_time[0]}</div>}
               <input
+                name="start_time"
+                id="start_time"
                 type="datetime-local"
                 className="form-control"
                 value={startTime}

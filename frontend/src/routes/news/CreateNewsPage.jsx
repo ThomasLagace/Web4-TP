@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import newsClient from '../../api/newsClient'
+import useServerValidation from '../../hooks/useServerValidation'
 
 export default function CreateNewsPage() {
   const navigate = useNavigate()
@@ -10,11 +11,13 @@ export default function CreateNewsPage() {
   const [content, setContent] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
+  const { errors, handleServerErrors, clearErrors } = useServerValidation()
 
   const handleSubmit = (e) => {
     e.preventDefault()
 
     setError('')
+    clearErrors()
     setIsSaving(true)
 
     newsClient.store(date, title, content)
@@ -22,8 +25,12 @@ export default function CreateNewsPage() {
         navigate('/news')
       })
       .catch((err) => {
-        setError('Une erreur est survenue lors de la création de l\'actualité.')
-        console.error(err)
+        if (err?.response?.status === 422) {
+          handleServerErrors(err)
+        } else {
+          setError('Une erreur est survenue lors de la création de l\'actualité.')
+          console.error(err)
+        }
       })
       .finally(() => {
         setIsSaving(false)
@@ -46,7 +53,10 @@ export default function CreateNewsPage() {
 
             <div className="mb-3">
               <label className="form-label">Date</label>
+              {errors.date && <div className="text-danger mb-2">{errors.date[0]}</div>}
               <input
+                name="date"
+                id="date"
                 type="date"
                 className="form-control"
                 value={date}
@@ -56,7 +66,10 @@ export default function CreateNewsPage() {
 
             <div className="mb-3">
               <label className="form-label">Titre</label>
+              {errors.title && <div className="text-danger mb-2">{errors.title[0]}</div>}
               <input
+                name="title"
+                id="title"
                 type="text"
                 className="form-control"
                 value={title}
@@ -66,7 +79,10 @@ export default function CreateNewsPage() {
 
             <div className="mb-3">
               <label className="form-label">Contenu</label>
+              {errors.content && <div className="text-danger mb-2">{errors.content[0]}</div>}
               <textarea
+                name="content"
+                id="content"
                 className="form-control"
                 rows="6"
                 value={content}

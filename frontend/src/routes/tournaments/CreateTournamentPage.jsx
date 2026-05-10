@@ -4,6 +4,7 @@ import Pagination from '../../components/Pagination'
 
 import tournamentsClient from '../../api/tournamentsClient'
 import playersClient from '../../api/playersClient'
+import useServerValidation from '../../hooks/useServerValidation'
 
 const MAX_PLAYERS = 16
 
@@ -23,6 +24,7 @@ export default function CreateTournamentPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [isLoadingPlayers, setIsLoadingPlayers] = useState(true)
   const [error, setError] = useState('')
+  const { errors, handleServerErrors, clearErrors } = useServerValidation()
 
   useEffect(() => {
     setIsLoadingPlayers(true)
@@ -52,6 +54,7 @@ export default function CreateTournamentPage() {
     e.preventDefault()
 
     setError('')
+    clearErrors()
     setIsSaving(true)
 
     tournamentsClient.store(
@@ -64,8 +67,12 @@ export default function CreateTournamentPage() {
         navigate('/tournaments')
       })
       .catch((err) => {
-        setError('Une erreur est survenue lors de la création du tournoi.')
-        console.error(err)
+        if (err?.response?.status === 422) {
+          handleServerErrors(err)
+        } else {
+          setError('Une erreur est survenue lors de la création du tournoi.')
+          console.error(err)
+        }
       })
       .finally(() => {
         setIsSaving(false)
@@ -103,36 +110,44 @@ export default function CreateTournamentPage() {
             <div className="mb-3">
               <label className="form-label">Nom</label>
 
-              <input
-                type="text"
-                className="form-control"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+                {errors.name && <div className="text-danger mb-2">{errors.name[0]}</div>}
+                <input
+                  name="name"
+                  id="name"
+                  type="text"
+                  className="form-control"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
             </div>
 
             <div className="mb-3">
               <label className="form-label">Date de début</label>
 
-              <input
-                type="date"
-                className="form-control"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
+                {errors.start_date && <div className="text-danger mb-2">{errors.start_date[0]}</div>}
+                <input
+                  name="start_date"
+                  id="start_date"
+                  type="date"
+                  className="form-control"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
             </div>
 
             <div className="mb-3">
               <label className="form-label">Prix</label>
 
-              <input
-                type="number"
-                step="1"
-                min={0}
-                className="form-control"
-                value={prize}
-                onChange={(e) => setPrize(parseInt(e.target.value || 0))}
-              />
+                {errors.prize && <div className="text-danger mb-2">{errors.prize[0]}</div>}
+                <input
+                  name="prize"
+                  id="prize"
+                  type="number"
+                  step="0.01"
+                  className="form-control"
+                  value={prize}
+                  onChange={(e) => setPrize(parseFloat(e.target.value || 0))}
+                />
             </div>
 
             <div className="mb-3">
