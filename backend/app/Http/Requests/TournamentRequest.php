@@ -28,6 +28,7 @@ class TournamentRequest extends FormRequest
                 'start_date' => ['required', 'date'],
                 'prize' => ['required', 'integer', 'min:0'],
                 'player_ids' => ['required', 'array', 'min:16', 'max:16'],
+                'player_ids.*' => ['integer', 'exists:players,id', 'distinct']
             ];
         } else {
             return [
