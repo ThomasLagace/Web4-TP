@@ -98,7 +98,7 @@ export default function TournamentPage() {
                     </li>
                     <li className="mb-2">
                       <span className="text-muted">Prix :</span>{' '}
-                      <strong>{tournament.prize} $</strong>
+                      <strong>{tournament.prize} elo</strong>
                     </li>
                     {tournament.winner && (
                       <li className="mb-2">
