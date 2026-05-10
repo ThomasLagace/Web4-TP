@@ -52,7 +52,9 @@ class Player extends Model
      */
     public function hasActiveTournaments(): bool
     {
-        return Tournament::where('status', '!=', 'finished')->exists();
+        return $this->tournaments()
+            ->where('status', '!=', 'finished')
+            ->exists();
     }
 
     /**
