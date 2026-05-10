@@ -36,7 +36,6 @@ export default function EditGamePage() {
       })
       .catch((err) => {
         setError('Une erreur est survenue lors du chargement.')
-        console.error(err)
       })
       .finally(() => {
         setIsLoading(false)
@@ -62,7 +61,6 @@ export default function EditGamePage() {
           handleServerErrors(err)
         } else {
           setError('Une erreur est survenue lors de la mise à jour de la partie.')
-          console.error(err)
         }
       })
       .finally(() => {

@@ -27,7 +27,6 @@ export default function EditRankPage() {
       })
       .catch((err) => {
         setError('Une erreur est survenue lors du chargement.')
-        console.error(err)
       })
       .finally(() => {
         setIsLoading(false)
@@ -49,7 +48,6 @@ export default function EditRankPage() {
           handleServerErrors(err)
         } else {
           setError('Une erreur est survenue lors de la mise à jour du rang.')
-          console.error(err)
         }
       })
       .finally(() => {

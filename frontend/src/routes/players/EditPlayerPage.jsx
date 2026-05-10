@@ -29,7 +29,6 @@ export default function EditPlayerPage() {
       })
       .catch((err) => {
         setError('Une erreur est survenue lors du chargement.')
-        console.error(err)
       })
       .finally(() => {
         setIsLoading(false)
@@ -49,8 +48,6 @@ export default function EditPlayerPage() {
       .catch((err) => {
         if (err?.response?.status === 422) {
           handleServerErrors(err)
-        } else {
-          console.error(err)
         }
       })
       .finally(() => {

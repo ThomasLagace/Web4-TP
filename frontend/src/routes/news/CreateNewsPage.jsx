@@ -29,7 +29,6 @@ export default function CreateNewsPage() {
           handleServerErrors(err)
         } else {
           setError('Une erreur est survenue lors de la création de l\'actualité.')
-          console.error(err)
         }
       })
       .finally(() => {

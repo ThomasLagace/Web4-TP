@@ -29,7 +29,6 @@ export default function CreatePlayerPage() {
           handleServerErrors(err)
         } else {
           setError('Une erreur est survenue lors de la création du joueur.')
-          console.error(err)
         }
       })
       .finally(() => {
